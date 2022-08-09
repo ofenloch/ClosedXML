@@ -20,6 +20,7 @@ namespace ClosedXML.Excel.CalcEngine
         protected ExpressionCache _cache;               // cache with parsed expressions
         private readonly FormulaParser _parser;
         private readonly FunctionRegistry _funcRegistry;      // table with constants and functions (pi, sin, etc)
+        private readonly CalculationVisitor _visitor;
 
         public CalcEngine(CultureInfo culture)
         {
@@ -27,6 +28,7 @@ namespace ClosedXML.Excel.CalcEngine
             _funcRegistry = GetFunctionTable();
             _cache = new ExpressionCache(this);
             _parser = new FormulaParser(_funcRegistry);
+            _visitor = new CalculationVisitor(_funcRegistry);
         }
 
         /// <summary>
@@ -61,8 +63,7 @@ namespace ClosedXML.Excel.CalcEngine
                 : Parse(expression);
 
             var ctx = new CalcContext(this, _culture, wb, ws, address);
-            var calculatingVisitor = new CalculationVisitor(_funcRegistry);
-            var result = x.AstRoot.Accept(ctx, calculatingVisitor);
+            var result = x.AstRoot.Accept(ctx, _visitor);
             if (ctx.UseImplicitIntersection)
             {
                 result = result.Match(
