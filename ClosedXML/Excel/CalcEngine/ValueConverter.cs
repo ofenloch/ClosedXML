@@ -26,8 +26,7 @@ namespace ClosedXML.Excel.CalcEngine
                 : Error.CellValue;
         }
 
-
-        public OneOf<double, Error> CovertToNumber(ScalarValue value)
+        public OneOf<double, Error> CovertToNumber(in ScalarValue value)
         {
             return value.Match(this,
                 (logical, _) => logical ? 1 : 0,
@@ -36,7 +35,7 @@ namespace ClosedXML.Excel.CalcEngine
                 (error, _) => error);
         }
 
-        internal OneOf<double, Error> ToNumber(AnyValue? value)
+        internal OneOf<double, Error> ToNumber(in AnyValue? value)
         {
             if (!value.HasValue)
                 return Error.CellValue;

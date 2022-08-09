@@ -21,7 +21,7 @@ namespace ClosedXML.Excel.CalcEngine.Functions
 
         public static CalcEngineFunction Adapt(Func<double, AnyValue> f)
         {
-            return (ctx, args) => ctx.Converter.ToNumber(args[0]).Match(
+            return (ctx, args) => ctx.Converter.ToNumber(in args[0]).Match(
                     number => f(number),
                     error => error);
         }

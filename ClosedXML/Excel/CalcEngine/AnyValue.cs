@@ -220,7 +220,7 @@ namespace ClosedXML.Excel.CalcEngine
 
         private static ScalarValue UnaryArithmeticOp(ScalarValue value, Func<double, double> op, ValueConverter converter)
         {
-            var conversionResult = converter.CovertToNumber(value);
+            var conversionResult = converter.CovertToNumber(in value);
             if (!conversionResult.TryPickT0(out var number, out var error))
                 return error;
 
@@ -233,41 +233,41 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue BinaryPlus(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => lhs + rhs, ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs + rhs, ctx.Converter);
             }, context);
         }
 
         public static AnyValue BinaryMinus(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => lhs - rhs, ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs - rhs, ctx.Converter);
             }, context);
         }
 
         public static AnyValue BinaryMult(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => lhs * rhs, ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs * rhs, ctx.Converter);
             }, context);
         }
 
         public static AnyValue BinaryDiv(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => rhs == 0.0 ? Error.DivisionByZero : lhs / rhs, ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => rhs == 0.0 ? Error.DivisionByZero : lhs / rhs, ctx.Converter);
             }, context);
         }
 
         public static AnyValue BinaryExp(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => lhs == 0 && rhs == 0 ? Error.NumberInvalid : Math.Pow(lhs, rhs), ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs == 0 && rhs == 0 ? Error.NumberInvalid : Math.Pow(lhs, rhs), ctx.Converter);
             }, context);
         }
 
@@ -277,7 +277,7 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue IsEqual(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
                     static cmp => cmp == 0,
@@ -287,7 +287,7 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue IsNotEqual(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
                     static cmp => cmp != 0,
@@ -297,7 +297,7 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue IsGreaterThan(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
                     static cmp => cmp > 0,
@@ -307,7 +307,7 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue IsGreaterThanOrEqual(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
                     static cmp => cmp >= 0,
@@ -317,7 +317,7 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue IsLessThan(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
                     static cmp => cmp < 0,
@@ -327,7 +327,7 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue IsLessThanOrEqual(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
                     static cmp => cmp <= 0,
@@ -339,7 +339,7 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue Concat(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
+            return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 var leftTextResult = ctx.Converter.ToText(leftItem);
                 if (!leftTextResult.TryPickT0(out var leftText, out var leftError))
@@ -450,15 +450,15 @@ namespace ClosedXML.Excel.CalcEngine
             }
         }
 
-        private static ScalarValue BinaryArithmeticOp(ScalarValue left, ScalarValue right, BinaryNumberFunc func, ValueConverter converter)
+        private static ScalarValue BinaryArithmeticOp(in ScalarValue left, in ScalarValue right, BinaryNumberFunc func, ValueConverter converter)
         {
-            var leftConversionResult = converter.CovertToNumber(left);
+            var leftConversionResult = converter.CovertToNumber(in left);
             if (!leftConversionResult.TryPickT0(out var leftNumber, out var leftError))
             {
                 return leftError;
             }
 
-            var rightConversionResult = converter.CovertToNumber(right);
+            var rightConversionResult = converter.CovertToNumber(in right);
             if (!rightConversionResult.TryPickT0(out var rightNumber, out var rightError))
             {
                 return rightError;

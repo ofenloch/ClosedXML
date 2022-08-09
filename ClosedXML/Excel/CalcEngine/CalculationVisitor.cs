@@ -142,7 +142,7 @@ namespace ClosedXML.Excel.CalcEngine
             // Union (can easily be in the range) is one of the nodes that can't be in the root. Enclose in braces to make parser happy
             // Range can be something like 1+2, not just a reference to some area.
             var namedRangeFormula = namedRange.ToString();
-            namedRangeFormula = !namedRangeFormula.StartsWith("=") ? "=(" + namedRange.ToString() + ")" : namedRangeFormula;
+            namedRangeFormula = !namedRangeFormula.StartsWith("=") ? "=(" + namedRange + ")" : namedRangeFormula;
             var rangeResult = context.CalcEngine.EvaluateExpression(namedRangeFormula, context.Workbook, context.Worksheet);
             return rangeResult;
 
