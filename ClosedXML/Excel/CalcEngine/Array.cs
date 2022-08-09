@@ -61,7 +61,7 @@ namespace ClosedXML.Excel.CalcEngine
         /// Return a new array that was created by applying a function to each element of the left and right array.
         /// Arrays can have different size and missing values are replaced by <c>#N/A</c>.
         /// </summary>
-        public Array Apply(Array rightArray, BinaryFunc func)
+        public Array Apply(Array rightArray, BinaryFunc func, CalcContext ctx)
         {
             var leftArray = this;
             var width = Math.Max(leftArray.Width, rightArray.Width);
@@ -73,7 +73,7 @@ namespace ClosedXML.Excel.CalcEngine
                 {
                     var leftItem = x < leftArray.Width && y < leftArray.Height ? leftArray[y, x] : Error.NoValueAvailable;
                     var rightItem = x < rightArray.Width && y < rightArray.Height ? rightArray[y, x] : Error.NoValueAvailable;
-                    data[y, x] = func(leftItem, rightItem);
+                    data[y, x] = func(leftItem, rightItem, ctx);
                 }
             }
 
