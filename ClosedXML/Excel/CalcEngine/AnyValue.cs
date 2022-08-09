@@ -233,52 +233,42 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue BinaryPlus(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, Plus, context);
-
-            static ScalarValue Plus(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, (lhs, rhs) => lhs + rhs, ctx.Converter);
-            }
+                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => lhs + rhs, ctx.Converter);
+            }, context);
         }
 
         public static AnyValue BinaryMinus(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, Minus, context);
-
-            static ScalarValue Minus(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, (lhs, rhs) => lhs - rhs, ctx.Converter);
-            }
+                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => lhs - rhs, ctx.Converter);
+            }, context);
         }
 
         public static AnyValue BinaryMult(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, Mult, context);
-
-            static ScalarValue Mult(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, (lhs, rhs) => lhs * rhs, ctx.Converter);
-            }
+                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => lhs * rhs, ctx.Converter);
+            }, context);
         }
 
         public static AnyValue BinaryDiv(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, Div, context);
-
-            static ScalarValue Div(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, (lhs, rhs) => rhs == 0.0 ? Error.DivisionByZero : lhs / rhs, ctx.Converter);
-            }
+                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => rhs == 0.0 ? Error.DivisionByZero : lhs / rhs, ctx.Converter);
+            }, context);
         }
 
         public static AnyValue BinaryExp(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, Exp, context);
-
-            static ScalarValue Exp(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(leftItem, rightItem, (lhs, rhs) => lhs == 0 && rhs == 0 ? Error.NumberInvalid : Math.Pow(lhs, rhs), ctx.Converter);
-            }
+                return BinaryArithmeticOp(leftItem, rightItem, static (lhs, rhs) => lhs == 0 && rhs == 0 ? Error.NumberInvalid : Math.Pow(lhs, rhs), ctx.Converter);
+            }, context);
         }
 
         #endregion
@@ -287,93 +277,80 @@ namespace ClosedXML.Excel.CalcEngine
 
         public static AnyValue IsEqual(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, IsEqual, context);
-
-            static ScalarValue IsEqual(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
-                    cmp => cmp == 0,
-                    error => error);
-            }
+                    static cmp => cmp == 0,
+                    static error => error);
+            }, context);
         }
 
         public static AnyValue IsNotEqual(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, IsNotEqual, context);
-
-            static ScalarValue IsNotEqual(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
-                    cmp => cmp != 0,
-                    error => error);
-            }
+                    static cmp => cmp != 0,
+                    static error => error);
+            }, context);
         }
 
         public static AnyValue IsGreaterThan(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, IsGreaterThan, context);
-
-            static ScalarValue IsGreaterThan(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
-                    cmp => cmp > 0,
-                    error => error);
-            }
+                    static cmp => cmp > 0,
+                    static error => error);
+            }, context);
         }
 
         public static AnyValue IsGreaterThanOrEqual(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, IsGreaterThanOrEqual, context);
-
-            static ScalarValue IsGreaterThanOrEqual(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
-                    cmp => cmp >= 0,
-                    error => error);
-            }
+                    static cmp => cmp >= 0,
+                    static error => error);
+            }, context);
         }
 
         public static AnyValue IsLessThan(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, IsLessThan, context);
-
-            static ScalarValue IsLessThan(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
-                    cmp => cmp < 0,
-                    error => error);
-            }
+                    static cmp => cmp < 0,
+                    static error => error);
+            }, context);
         }
 
         public static AnyValue IsLessThanOrEqual(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, IsLessThanOrEqual, context);
-
-            static ScalarValue IsLessThanOrEqual(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
                 return CompareValues(leftItem, rightItem, ctx.Culture).Match<ScalarValue>(
-                    cmp => cmp <= 0,
-                    error => error);
-            }
+                    static cmp => cmp <= 0,
+                    static error => error);
+            }, context);
         }
 
         #endregion
 
         public static AnyValue Concat(in AnyValue left, in AnyValue right, CalcContext context)
         {
-            return BinaryOperation(left, right, Concat, context);
-
-            static ScalarValue Concat(ScalarValue leftItem, ScalarValue rightItem, CalcContext ctx)
+            return BinaryOperation(left, right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return ctx.Converter.ToText(leftItem)
-                    .Match(
-                        leftText => ctx.Converter.ToText(rightItem).Match<OneOf<string, Error>>(
-                            rightText => leftText + rightText,
-                            rightError => rightError),
-                        leftError => leftError).Match<ScalarValue>(
-                            text => text,
-                            error => error);
-            }
+                var leftTextResult = ctx.Converter.ToText(leftItem);
+                if (!leftTextResult.TryPickT0(out var leftText, out var leftError))
+                    return leftError;
+
+                var rightTextResult = ctx.Converter.ToText(rightItem);
+                if (!rightTextResult.TryPickT0(out var rightText, out var rightError))
+                    return rightError;
+
+                return leftText + rightText;
+            }, context);
         }
 
         private static AnyValue BinaryOperation(in AnyValue left, in AnyValue right, BinaryFunc func, CalcContext context)
@@ -382,40 +359,40 @@ namespace ClosedXML.Excel.CalcEngine
             var isRightScalar = right.TryPickScalar(out var rightScalar, out var rightCollection);
 
             if (isLeftScalar && isRightScalar)
-                return func(leftScalar, rightScalar, context).ToAnyValue();
+                return func(in leftScalar, in rightScalar, context).ToAnyValue();
 
             if (isLeftScalar)
             {
-                return rightCollection.Match(
-                    array => new ScalarArray(leftScalar, array.Width, array.Height).Apply(array, func, context),
-                    rightReference =>
-                    {
-                        if (rightReference.TryGetSingleCellValue(out var rightCellValue, context))
-                            return func(leftScalar, rightCellValue, context).ToAnyValue();
+                // Right side is an array
+                if (rightCollection.TryPickT0(out var rightArray, out var rightReference))
+                    return new ScalarArray(leftScalar, rightArray.Width, rightArray.Height).Apply(rightArray, func, context);
 
-                        var referenceArrayResult = rightReference.ToArray(context);
-                        if (!referenceArrayResult.TryPickT0(out var rightRefArray, out var rightError))
-                            return rightError;
+                // Right side is a reference
+                if (rightReference.TryGetSingleCellValue(out var rightCellValue, context))
+                    return func(in leftScalar, in rightCellValue, context).ToAnyValue();
 
-                        return new ScalarArray(leftScalar, rightRefArray.Width, rightRefArray.Height).Apply(rightRefArray, func, context);
-                    });
+                var referenceArrayResult = rightReference.ToArray(context);
+                if (!referenceArrayResult.TryPickT0(out var rightRefArray, out var rightError))
+                    return rightError;
+
+                return new ScalarArray(leftScalar, rightRefArray.Width, rightRefArray.Height).Apply(rightRefArray, func, context);
             }
 
             if (isRightScalar)
             {
-                return leftCollection.Match(
-                    leftArray => leftArray.Apply(new ScalarArray(rightScalar, leftArray.Width, leftArray.Height), func, context),
-                    leftReference =>
-                    {
-                        if (leftReference.TryGetSingleCellValue(out var leftCellValue, context))
-                            return func(leftCellValue, rightScalar, context).ToAnyValue();
+                // Left side is an array
+                if (leftCollection.TryPickT0(out var leftArray, out var leftReference))
+                    return leftArray.Apply(new ScalarArray(rightScalar, leftArray.Width, leftArray.Height), func, context);
 
-                        var referenceArrayResult = leftReference.ToArray(context);
-                        if (!referenceArrayResult.TryPickT0(out var leftRefArray, out var leftError))
-                            return leftError;
+                // Left side is a reference
+                if (leftReference.TryGetSingleCellValue(out var leftCellValue, context))
+                    return func(leftCellValue, rightScalar, context).ToAnyValue();
 
-                        return leftRefArray.Apply(new ScalarArray(rightScalar, leftRefArray.Width, leftRefArray.Height), func, context);
-                    });
+                var referenceArrayResult = leftReference.ToArray(context);
+                if (!referenceArrayResult.TryPickT0(out var leftRefArray, out var leftError))
+                    return leftError;
+
+                return leftRefArray.Apply(new ScalarArray(rightScalar, leftRefArray.Width, leftRefArray.Height), func, context);
             }
 
             // Both are aggregates
@@ -542,5 +519,5 @@ namespace ClosedXML.Excel.CalcEngine
         private delegate OneOf<double, Error> BinaryNumberFunc(double lhs, double rhs);
     }
 
-    internal delegate ScalarValue BinaryFunc(ScalarValue lhs, ScalarValue rhs, CalcContext ctx);
+    internal delegate ScalarValue BinaryFunc(in ScalarValue lhs, in ScalarValue rhs, CalcContext ctx);
 }
