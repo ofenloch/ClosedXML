@@ -396,61 +396,58 @@ namespace ClosedXML.Excel.CalcEngine
             }
 
             // Both are aggregates
-            return leftCollection.Match(
-                leftArray => rightCollection.Match(
-                        rightArray => leftArray.Apply(rightArray, func, context),
-                        rightReference =>
-                        {
-                            if (rightReference.TryGetSingleCellValue(out var rightCellValue, context))
-                                return leftArray.Apply(new ScalarArray(rightCellValue, leftArray.Width, leftArray.Height), func, context);
+            {
+                var isLeftArray = leftCollection.TryPickT0(out var leftArray, out var leftReference);
+                var isRightArray = rightCollection.TryPickT0(out var rightArray, out var rightReference);
 
-                            if (rightReference.Areas.Count == 1)
-                            {
-                                var area = rightReference.Areas[0];
-                                return leftArray.Apply(new ReferenceArray(area, context), func, context);
-                            }
+                if (isLeftArray && isRightArray)
+                    return leftArray.Apply(rightArray, func, context);
 
-                            return leftArray.Apply(new ScalarArray(Error.CellValue, leftArray.Width, leftArray.Height), func, context);
-                        }),
-                leftReference => rightCollection.Match(
-                        rightArray =>
-                        {
-                            if (leftReference.TryGetSingleCellValue(out var leftCellValue, context))
-                                return new ScalarArray(leftCellValue, rightArray.Width, rightArray.Height).Apply(rightArray, func, context);
+                if (isLeftArray)
+                {
+                    if (rightReference.TryGetSingleCellValue(out var rightCellValue, context))
+                        return leftArray.Apply(new ScalarArray(rightCellValue, leftArray.Width, leftArray.Height), func, context);
 
-                            if (leftReference.Areas.Count == 1)
-                            {
-                                var area = leftReference.Areas[0];
-                                return new ReferenceArray(area, context).Apply(rightArray, func, context);
-                            }
+                    if (rightReference.Areas.Count == 1)
+                        return leftArray.Apply(new ReferenceArray(rightReference.Areas[0], context), func, context);
 
-                            var errorArray = new ScalarArray(Error.CellValue, rightArray.Width, rightArray.Height);
-                            return errorArray.Apply(rightArray, func, context);
-                        },
-                        rightReference =>
-                        {
-                            if (leftReference.Areas.Count > 1 && rightReference.Areas.Count > 1)
-                                return Error.CellValue;
+                    return leftArray.Apply(new ScalarArray(Error.CellValue, leftArray.Width, leftArray.Height), func, context);
+                }
 
-                            if (leftReference.Areas.Count > 1)
-                                return new ScalarArray(Error.CellValue, rightReference.Areas[0].ColumnSpan, rightReference.Areas[0].RowSpan);
+                if (isRightArray)
+                {
+                    if (leftReference.TryGetSingleCellValue(out var leftCellValue, context))
+                        return new ScalarArray(leftCellValue, rightArray.Width, rightArray.Height).Apply(rightArray, func, context);
 
-                            if (rightReference.Areas.Count > 1)
-                                return new ScalarArray(Error.CellValue, leftReference.Areas[0].ColumnSpan, leftReference.Areas[0].RowSpan);
+                    if (leftReference.Areas.Count == 1)
+                        return new ReferenceArray(leftReference.Areas[0], context).Apply(rightArray, func, context);
 
-                            var leftArea = leftReference.Areas.Single();
-                            var rightArea = rightReference.Areas.Single();
-                            if (leftArea.IsSingleCell() && rightArea.IsSingleCell())
-                            {
-                                var leftCellValue = context.GetCellValue(leftArea.Worksheet, leftArea.FirstAddress.RowNumber, leftArea.FirstAddress.ColumnNumber);
-                                var rightCellValue = context.GetCellValue(rightArea.Worksheet, rightArea.FirstAddress.RowNumber, rightArea.FirstAddress.ColumnNumber);
-                                return func(leftCellValue, rightCellValue, context).ToAnyValue();
-                            }
+                    return new ScalarArray(Error.CellValue, rightArray.Width, rightArray.Height).Apply(rightArray, func, context);
+                }
 
-                            var leftRefArray = new ReferenceArray(leftArea, context);
-                            var rightRefArray = new ReferenceArray(rightArea, context);
-                            return leftRefArray.Apply(rightRefArray, func, context);
-                        }));
+                // Both are references
+                if (leftReference.Areas.Count > 1 && rightReference.Areas.Count > 1)
+                    return Error.CellValue;
+
+                if (leftReference.Areas.Count > 1)
+                    return new ScalarArray(Error.CellValue, rightReference.Areas[0].ColumnSpan, rightReference.Areas[0].RowSpan);
+
+                if (rightReference.Areas.Count > 1)
+                    return new ScalarArray(Error.CellValue, leftReference.Areas[0].ColumnSpan, leftReference.Areas[0].RowSpan);
+
+                var leftArea = leftReference.Areas[0];
+                var rightArea = rightReference.Areas[0];
+                if (leftArea.IsSingleCell() && rightArea.IsSingleCell())
+                {
+                    var leftCellValue = context.GetCellValue(leftArea.Worksheet, leftArea.FirstAddress.RowNumber, leftArea.FirstAddress.ColumnNumber);
+                    var rightCellValue = context.GetCellValue(rightArea.Worksheet, rightArea.FirstAddress.RowNumber, rightArea.FirstAddress.ColumnNumber);
+                    return func(leftCellValue, rightCellValue, context).ToAnyValue();
+                }
+
+                var leftRefArray = new ReferenceArray(leftArea, context);
+                var rightRefArray = new ReferenceArray(rightArea, context);
+                return leftRefArray.Apply(rightRefArray, func, context);
+            }
         }
 
         private static ScalarValue BinaryArithmeticOp(ScalarValue left, ScalarValue right, BinaryNumberFunc func, ValueConverter converter)
