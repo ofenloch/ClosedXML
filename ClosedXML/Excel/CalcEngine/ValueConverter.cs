@@ -13,22 +13,8 @@ namespace ClosedXML.Excel.CalcEngine
             _culture = culture;
             _ctx = ctx;
         }
-        
-        private static  OneOf<double, Error> TextToNumber(CultureInfo culture, string text)
-        {
-            return double.TryParse(text, NumberStyles.Float, culture, out var number)
-                ? number
-                : Error.CellValue;
-        }
 
-        public OneOf<double, Error> CovertToNumber(in ScalarValue value)
-        {
-            return value.Match(this,
-                (logical, _) => logical ? 1 : 0,
-                (number, _) => number,
-                (text, conv) => TextToNumber(conv._culture, text),
-                (error, _) => error);
-        }
+        public CultureInfo Culture => _culture;
 
         internal OneOf<double, Error> ToNumber(in AnyValue? value)
         {
@@ -36,26 +22,17 @@ namespace ClosedXML.Excel.CalcEngine
                 return Error.CellValue;
 
             if (value.Value.TryPickScalar(out var scalar, out var collection))
-                return ScalarToNumber(scalar, _culture);
+                return scalar.ToNumber(_culture);
 
             return collection.Match(
                     array => throw new NotImplementedException("Not sure what to do with it."),
                     reference =>
                     {
                         if (reference.TryGetSingleCellValue(out var scalarValue, _ctx))
-                            return ScalarToNumber(scalarValue, _culture);
+                            return scalarValue.ToNumber(_culture);
 
                         throw new NotImplementedException("Not sure what to do with it.");
                     });
-
-            static OneOf<double, Error> ScalarToNumber(ScalarValue value, CultureInfo culture)
-            {
-                return value.Match(culture,
-                        (logical, _) => logical ? 1.0 : 0.0,
-                        (number, _) => number,
-                        (text, culture) => TextToNumber(culture, text),
-                        (error, _) => error);
-            }
         }
 
         internal OneOf<string, Error> ToText(AnyValue value)

@@ -131,7 +131,7 @@ namespace ClosedXML.Excel.CalcEngine
         }
 
         /// <summary>
-        /// Convert value to string. Error is not convertible.
+        /// Convert value to text. Error is not convertible.
         /// </summary>
         public OneOf<string, Error> ToText(CultureInfo culture)
         {
@@ -143,6 +143,28 @@ namespace ClosedXML.Excel.CalcEngine
                 ErrorValue => _error,
                 _ => throw new InvalidOperationException()
             };
+        }
+
+        /// <summary>
+        /// Convert value to number. Error is not convertible.
+        /// </summary>
+        public OneOf<double, Error> ToNumber(CultureInfo culture)
+        {
+            return _index switch
+            {
+                LogicalValue => _logical ? 1.0 : 0.0,
+                NumberValue => _number,
+                TextValue => TextToNumber(_text, culture),
+                ErrorValue => _error,
+                _ => throw new InvalidOperationException()
+            };
+        }
+
+        private static OneOf<double, Error> TextToNumber(string text, CultureInfo culture)
+        {
+            return double.TryParse(text, NumberStyles.Float, culture, out var number)
+                ? number
+                : Error.CellValue;
         }
     }
 }

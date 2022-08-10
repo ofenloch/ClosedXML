@@ -220,7 +220,7 @@ namespace ClosedXML.Excel.CalcEngine
 
         private static ScalarValue UnaryArithmeticOp(ScalarValue value, Func<double, double> op, ValueConverter converter)
         {
-            var conversionResult = converter.CovertToNumber(in value);
+            var conversionResult = value.ToNumber(converter.Culture);
             if (!conversionResult.TryPickT0(out var number, out var error))
                 return error;
 
@@ -452,13 +452,13 @@ namespace ClosedXML.Excel.CalcEngine
 
         private static ScalarValue BinaryArithmeticOp(in ScalarValue left, in ScalarValue right, BinaryNumberFunc func, ValueConverter converter)
         {
-            var leftConversionResult = converter.CovertToNumber(in left);
+            var leftConversionResult = left.ToNumber(converter.Culture);
             if (!leftConversionResult.TryPickT0(out var leftNumber, out var leftError))
             {
                 return leftError;
             }
 
-            var rightConversionResult = converter.CovertToNumber(in right);
+            var rightConversionResult = right.ToNumber(converter.Culture);
             if (!rightConversionResult.TryPickT0(out var rightNumber, out var rightError))
             {
                 return rightError;
