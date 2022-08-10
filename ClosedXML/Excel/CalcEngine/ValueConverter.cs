@@ -57,23 +57,14 @@ namespace ClosedXML.Excel.CalcEngine
                         (error, _) => error);
             }
         }
-        
-        internal OneOf<string, Error> ToText(ScalarValue lhs)
-        {
-            return lhs.Match<OneOf<string, Error>, CultureInfo>(_culture,
-                (logical, _) => logical ? "TRUE" : "FALSE",
-                (number, culture) => number.ToString(culture),
-                (text, _) => text,
-                (error, _) => error);
-        }
 
         internal OneOf<string, Error> ToText(AnyValue value)
         {
             if (value.TryPickScalar(out var scalar, out var collection))
-                return ToText(scalar);
+                return scalar.ToText(_culture);
 
             if (collection.TryPickT0(out var array, out var _))
-                return ToText(array[0, 0]);
+                return array[0, 0].ToText(_culture);
 
             throw new NotImplementedException("Conversion from reference to text is not implemented yet.");
         }

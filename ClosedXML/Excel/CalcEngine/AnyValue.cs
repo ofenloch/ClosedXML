@@ -341,11 +341,11 @@ namespace ClosedXML.Excel.CalcEngine
         {
             return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                var leftTextResult = ctx.Converter.ToText(leftItem);
+                var leftTextResult = leftItem.ToText(ctx.Culture);
                 if (!leftTextResult.TryPickT0(out var leftText, out var leftError))
                     return leftError;
 
-                var rightTextResult = ctx.Converter.ToText(rightItem);
+                var rightTextResult = rightItem.ToText(ctx.Culture);
                 if (!rightTextResult.TryPickT0(out var rightText, out var rightError))
                     return rightError;
 

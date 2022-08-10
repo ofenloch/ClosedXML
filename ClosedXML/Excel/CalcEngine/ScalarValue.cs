@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace ClosedXML.Excel.CalcEngine
 {
@@ -123,6 +124,21 @@ namespace ClosedXML.Excel.CalcEngine
             {
                 LogicalValue => _logical,
                 NumberValue => _number,
+                TextValue => _text,
+                ErrorValue => _error,
+                _ => throw new InvalidOperationException()
+            };
+        }
+
+        /// <summary>
+        /// Convert value to string. Error is not convertible.
+        /// </summary>
+        public OneOf<string, Error> ToText(CultureInfo culture)
+        {
+            return _index switch
+            {
+                LogicalValue => _logical ? "TRUE" : "FALSE",
+                NumberValue => _number.ToString(culture),
                 TextValue => _text,
                 ErrorValue => _error,
                 _ => throw new InvalidOperationException()
