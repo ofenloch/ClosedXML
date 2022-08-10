@@ -9,12 +9,17 @@ namespace ClosedXML.Excel.CalcEngine
     /// A bare bone copy of <c>OneOf</c> that can be more optimized:
     /// <list type="bullet">
     ///   <item>readonly struct to get rid of defensive copies</item>
-    ///   <item>struct can be smaler through offsets (based on NoBox)</item>
+    ///   <item>struct can be smaller through offsets (based on NoBox)</item>
     ///   <item>allows to pass additional arguments to Match function to skip a need to instantiate a new lambda instance on each call and allow easier inlining.</item>
     /// </list>
     /// </remarks>
     internal readonly struct ScalarValue
     {
+        private const int LogicalValue = 0;
+        private const int NumberValue = 1;
+        private const int TextValue = 2;
+        private const int ErrorValue = 3;
+
         private readonly byte _index;
         private readonly bool _logical;
         private readonly double _number;
@@ -56,10 +61,10 @@ namespace ClosedXML.Excel.CalcEngine
         {
             return _index switch
             {
-                0 => transformLogical(_logical),
-                1 => transformNumber(_number),
-                2 => transformText(_text),
-                3 => transformError(_error),
+                LogicalValue => transformLogical(_logical),
+                NumberValue => transformNumber(_number),
+                TextValue => transformText(_text),
+                ErrorValue => transformError(_error),
                 _ => throw new InvalidOperationException()
             };
         }
@@ -68,10 +73,10 @@ namespace ClosedXML.Excel.CalcEngine
         {
             return _index switch
             {
-                0 => transformLogical(_logical, param),
-                1 => transformNumber(_number, param),
-                2 => transformText(_text, param),
-                3 => transformError(_error, param),
+                LogicalValue => transformLogical(_logical, param),
+                NumberValue => transformNumber(_number, param),
+                TextValue => transformText(_text, param),
+                ErrorValue => transformError(_error, param),
                 _ => throw new InvalidOperationException()
             };
         }
@@ -80,21 +85,48 @@ namespace ClosedXML.Excel.CalcEngine
         {
             return _index switch
             {
-                0 => transformLogical(_logical, param1, param2),
-                1 => transformNumber(_number, param1, param2),
-                2 => transformText(_text, param1, param2),
-                3 => transformError(_error, param1, param2),
+                LogicalValue => transformLogical(_logical, param1, param2),
+                NumberValue => transformNumber(_number, param1, param2),
+                TextValue => transformText(_text, param1, param2),
+                ErrorValue => transformError(_error, param1, param2),
                 _ => throw new InvalidOperationException()
             };
         }
 
+        public bool TryPickNumber(out double number)
+        {
+            if (_index == NumberValue)
+            {
+                number = _number;
+                return true;
+            }
+
+            number = default;
+            return false;
+        }
+
+        public bool TryPickError(out Error error)
+        {
+            if (_index == ErrorValue)
+            {
+                error = _error;
+                return true;
+            }
+
+            error = default;
+            return false;
+        }
+
         public AnyValue ToAnyValue()
         {
-            return Match<AnyValue>(
-                logical => logical,
-                number => number,
-                text => text,
-                error => error);
+            return _index switch
+            {
+                LogicalValue => _logical,
+                NumberValue => _number,
+                TextValue => _text,
+                ErrorValue => _error,
+                _ => throw new InvalidOperationException()
+            };
         }
     }
 }
