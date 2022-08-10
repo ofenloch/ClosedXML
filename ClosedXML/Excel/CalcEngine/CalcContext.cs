@@ -20,7 +20,6 @@ namespace ClosedXML.Excel.CalcEngine
             _worksheet = worksheet;
             _formulaAddress = formulaAddress;
             Culture = culture;
-            Converter = new ValueConverter(culture, this);
         }
 
         // LEGACY: Remove once legacy functions are migrated
@@ -40,8 +39,6 @@ namespace ClosedXML.Excel.CalcEngine
         /// Address of the calculated formula.
         /// </summary>
         public IXLAddress FormulaAddress => _formulaAddress ?? throw new MissingContextException();
-
-        public ValueConverter Converter { get; }
 
         /// <summary>
         /// A culture used for comparisons and conversions (e.g. text to number).

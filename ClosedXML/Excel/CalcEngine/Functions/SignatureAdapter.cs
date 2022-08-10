@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace ClosedXML.Excel.CalcEngine.Functions
 {
@@ -8,20 +9,25 @@ namespace ClosedXML.Excel.CalcEngine.Functions
     /// </summary>
     internal static class SignatureAdapter
     {
-        public static CalcEngineFunction Adapt(Func<CalcContext, string, AnyValue?, AnyValue> f)
+        public static CalcEngineFunction Adapt(Func<CalcContext, string, ScalarValue?, AnyValue> f)
         {
             return (ctx, args) =>
             {
-                if (!ctx.Converter.ToText(args[0] ?? AnyValue.From((double)0)).TryPickT0(out var arg0, out var error))
+                var arg0Input = args[0] ?? AnyValue.From(0.0);
+                if (!ToText(arg0Input, ctx.Culture).TryPickT0(out var arg0, out var error))
                     return error;
 
-                return f(ctx, arg0, args.Length > 1 ? args[1] : null);
+                var arg1 = args.Length > 1 && args[1].HasValue
+                    ? ToScalarValue(args[1], ctx)
+                    : default(ScalarValue?);
+
+                return f(ctx, arg0, arg1);
             };
         }
 
         public static CalcEngineFunction Adapt(Func<double, AnyValue> f)
         {
-            return (ctx, args) => ctx.Converter.ToNumber(in args[0]).Match(
+            return (ctx, args) => ToNumber(in args[0], ctx).Match(
                     number => f(number),
                     error => error);
         }
@@ -30,7 +36,7 @@ namespace ClosedXML.Excel.CalcEngine.Functions
         {
             return (ctx, args) =>
             {
-                if (!ctx.Converter.ToNumber(args[0] ?? 0).TryPickT0(out var number, out var error))
+                if (!ToNumber(args[0] ?? 0, ctx).TryPickT0(out var number, out var error))
                     return error;
 
                 var references = new List<Reference>();
@@ -44,6 +50,56 @@ namespace ClosedXML.Excel.CalcEngine.Functions
 
                 return f(ctx, number, references);
             };
+        }
+
+        /// <summary>
+        /// Convert input value to a scalar.
+        /// </summary>
+        private static ScalarValue ToScalarValue(in AnyValue? value, CalcContext ctx)
+        {
+            if (!value.HasValue)
+                return 0;
+
+            if (value.Value.TryPickScalar(out var scalar, out var collection))
+                return scalar;
+
+            if (collection.TryPickT0(out var array, out var reference))
+                return array[0, 0];
+
+            if (reference.TryGetSingleCellValue(out var referenceScalar, ctx))
+                return referenceScalar;
+
+            return Error.CellValue;
+        }
+
+        private static OneOf<double, Error> ToNumber(in AnyValue? value, CalcContext ctx)
+        {
+            if (!value.HasValue)
+                return Error.CellValue;
+
+            if (value.Value.TryPickScalar(out var scalar, out var collection))
+                return scalar.ToNumber(ctx.Culture);
+
+            return collection.Match(
+                array => throw new NotImplementedException("Not sure what to do with it."),
+                reference =>
+                {
+                    if (reference.TryGetSingleCellValue(out var scalarValue, ctx))
+                        return scalarValue.ToNumber(ctx.Culture);
+
+                    throw new NotImplementedException("Not sure what to do with it.");
+                });
+        }
+
+        private static OneOf<string, Error> ToText(in AnyValue value, CultureInfo culture)
+        {
+            if (value.TryPickScalar(out var scalar, out var collection))
+                return scalar.ToText(culture);
+
+            if (collection.TryPickT0(out var array, out var _))
+                return array[0, 0].ToText(culture);
+
+            throw new NotImplementedException("Conversion from reference to text is not implemented yet.");
         }
     }
 }

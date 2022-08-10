@@ -207,20 +207,20 @@ namespace ClosedXML.Excel.CalcEngine
         private static AnyValue UnaryOperation(in AnyValue value, Func<double, double> operatorFn, CalcContext context)
         {
             if (value.TryPickScalar(out var scalar, out var collection))
-                return UnaryArithmeticOp(scalar, operatorFn, context.Converter).ToAnyValue();
+                return UnaryArithmeticOp(scalar, operatorFn, context).ToAnyValue();
 
             return collection.Match(
-                array => array.Apply(arrayConst => UnaryArithmeticOp(arrayConst, operatorFn, context.Converter)),
+                array => array.Apply(arrayConst => UnaryArithmeticOp(arrayConst, operatorFn, context)),
                 reference => reference
-                    .Apply(cellValue => UnaryArithmeticOp(cellValue, operatorFn, context.Converter), context)
+                    .Apply(cellValue => UnaryArithmeticOp(cellValue, operatorFn, context), context)
                     .Match<AnyValue>(
                         array => array,
                         error => error));
         }
 
-        private static ScalarValue UnaryArithmeticOp(ScalarValue value, Func<double, double> op, ValueConverter converter)
+        private static ScalarValue UnaryArithmeticOp(ScalarValue value, Func<double, double> op, CalcContext ctx)
         {
-            var conversionResult = value.ToNumber(converter.Culture);
+            var conversionResult = value.ToNumber(ctx.Culture);
             if (!conversionResult.TryPickT0(out var number, out var error))
                 return error;
 
@@ -235,7 +235,7 @@ namespace ClosedXML.Excel.CalcEngine
         {
             return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs + rhs, ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs + rhs, ctx);
             }, context);
         }
 
@@ -243,7 +243,7 @@ namespace ClosedXML.Excel.CalcEngine
         {
             return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs - rhs, ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs - rhs, ctx);
             }, context);
         }
 
@@ -251,7 +251,7 @@ namespace ClosedXML.Excel.CalcEngine
         {
             return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs * rhs, ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs * rhs, ctx);
             }, context);
         }
 
@@ -259,7 +259,7 @@ namespace ClosedXML.Excel.CalcEngine
         {
             return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => rhs == 0.0 ? Error.DivisionByZero : lhs / rhs, ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => rhs == 0.0 ? Error.DivisionByZero : lhs / rhs, ctx);
             }, context);
         }
 
@@ -267,7 +267,7 @@ namespace ClosedXML.Excel.CalcEngine
         {
             return BinaryOperation(in left, in right, static (in ScalarValue leftItem, in ScalarValue rightItem, CalcContext ctx) =>
             {
-                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs == 0 && rhs == 0 ? Error.NumberInvalid : Math.Pow(lhs, rhs), ctx.Converter);
+                return BinaryArithmeticOp(in leftItem, in rightItem, static (lhs, rhs) => lhs == 0 && rhs == 0 ? Error.NumberInvalid : Math.Pow(lhs, rhs), ctx);
             }, context);
         }
 
@@ -450,15 +450,15 @@ namespace ClosedXML.Excel.CalcEngine
             }
         }
 
-        private static ScalarValue BinaryArithmeticOp(in ScalarValue left, in ScalarValue right, BinaryNumberFunc func, ValueConverter converter)
+        private static ScalarValue BinaryArithmeticOp(in ScalarValue left, in ScalarValue right, BinaryNumberFunc func, CalcContext ctx)
         {
-            var leftConversionResult = left.ToNumber(converter.Culture);
+            var leftConversionResult = left.ToNumber(ctx.Culture);
             if (!leftConversionResult.TryPickT0(out var leftNumber, out var leftError))
             {
                 return leftError;
             }
 
-            var rightConversionResult = right.ToNumber(converter.Culture);
+            var rightConversionResult = right.ToNumber(ctx.Culture);
             if (!rightConversionResult.TryPickT0(out var rightNumber, out var rightError))
             {
                 return rightError;

@@ -86,15 +86,15 @@ namespace ClosedXML.Excel.CalcEngine.Functions
                 .Value;
         }
 
-        private static AnyValue Hyperlink(CalcContext ctx, string linkLocation, AnyValue? friendlyName)
+        private static AnyValue Hyperlink(CalcContext ctx, string linkLocation, ScalarValue? friendlyName)
         {
-            var link = friendlyName is not null && ctx.Converter.ToText(friendlyName.Value).TryPickT0(out var name, out var _)
+            var link = friendlyName is not null && friendlyName.Value.ToText(ctx.Culture).TryPickT0(out var name, out var _)
                 ? new XLHyperlink(linkLocation, name)
                 : new XLHyperlink(linkLocation);
             var cell = ctx.Worksheet.Cell(ctx.FormulaAddress);
             cell.SetHyperlink(link);
 
-            return friendlyName ?? linkLocation;
+            return friendlyName?.ToAnyValue() ?? linkLocation;
         }
 
         private static object Index(List<Expression> p)
