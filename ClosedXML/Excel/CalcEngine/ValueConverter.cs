@@ -13,12 +13,7 @@ namespace ClosedXML.Excel.CalcEngine
             _culture = culture;
             _ctx = ctx;
         }
-
-        internal OneOf<double, Error> ToNumber(string text)
-        {
-            return TextToNumber(_culture, text);
-        }
-
+        
         private static  OneOf<double, Error> TextToNumber(CultureInfo culture, string text)
         {
             return double.TryParse(text, NumberStyles.Float, culture, out var number)
@@ -31,7 +26,7 @@ namespace ClosedXML.Excel.CalcEngine
             return value.Match(this,
                 (logical, _) => logical ? 1 : 0,
                 (number, _) => number,
-                (text, conv) => conv.ToNumber(text),
+                (text, conv) => TextToNumber(conv._culture, text),
                 (error, _) => error);
         }
 
@@ -62,12 +57,7 @@ namespace ClosedXML.Excel.CalcEngine
                         (error, _) => error);
             }
         }
-
-        internal string ToExcelString(double rightNumber)
-        {
-            return rightNumber.ToString(_culture);
-        }
-
+        
         internal OneOf<string, Error> ToText(ScalarValue lhs)
         {
             return lhs.Match<OneOf<string, Error>, CultureInfo>(_culture,
@@ -85,7 +75,7 @@ namespace ClosedXML.Excel.CalcEngine
             if (collection.TryPickT0(out var array, out var _))
                 return ToText(array[0, 0]);
 
-            throw new NotImplementedException();
+            throw new NotImplementedException("Conversion from reference to text is not implemented yet.");
         }
     }
 }
