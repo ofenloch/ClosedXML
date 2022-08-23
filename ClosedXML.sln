@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{073C
 		.github\PULL_REQUEST_TEMPLATE.md = .github\PULL_REQUEST_TEMPLATE.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClosedXML.WorkedExamples", "ClosedXML.WorkedExamples\ClosedXML.WorkedExamples.csproj", "{C55BE595-5B65-4A91-BD1B-95409605001D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{09B066ED-E4A7-4545-A1A4-FF03DD524BDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09B066ED-E4A7-4545-A1A4-FF03DD524BDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09B066ED-E4A7-4545-A1A4-FF03DD524BDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C55BE595-5B65-4A91-BD1B-95409605001D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C55BE595-5B65-4A91-BD1B-95409605001D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C55BE595-5B65-4A91-BD1B-95409605001D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C55BE595-5B65-4A91-BD1B-95409605001D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
