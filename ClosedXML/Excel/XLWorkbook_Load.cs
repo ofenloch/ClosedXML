@@ -157,6 +157,19 @@ namespace ClosedXML.Excel
                 var referenceMode = calculationProperties.ReferenceMode;
                 if (referenceMode != null)
                     ReferenceStyle = referenceMode.Value.ToClosedXml();
+
+                var iterate = calculationProperties.Iterate;
+                if (iterate != null)
+                    Iterate = calculationProperties.Iterate.Value;
+
+                var iterateCount = calculationProperties.IterateCount;
+                if (iterateCount != null)
+                    IterateCount = calculationProperties.IterateCount.Value;
+
+                var iterateDelta = calculationProperties.IterateDelta;
+                if (iterateDelta != null)
+                    IterateDelta = calculationProperties.IterateDelta.Value;
+
             }
 
             var efp = dSpreadsheet.ExtendedFilePropertiesPart;

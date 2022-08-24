@@ -211,6 +211,10 @@ namespace ClosedXML.Excel
         public Boolean FullCalculationOnLoad { get; set; }
         public Boolean FullPrecision { get; set; }
 
+        public Boolean Iterate { get; set; }
+        public UInt32 IterateCount { get; set; }
+        public double IterateDelta { get; set; }
+
         /// <summary>
         ///   Gets or sets the workbook's reference style.
         /// </summary>
