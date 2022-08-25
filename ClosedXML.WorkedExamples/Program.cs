@@ -47,11 +47,43 @@ namespace ClosedXML.WorkedExamples
             UnpackPackage(filePath2);
 
             var cwd = Directory.GetCurrentDirectory();
-            var filePath3 = Path.Combine(cwd, "test-mit-iteration.xlsx");
-            UnpackPackage(filePath3, Path.Combine(path, "test-mit-iteration.xlsx"));
-
+            var filePath3 = PathCombine(cwd, "/ClosedXML.WorkedExamples/data/test-with-iteration.xlsx");
+            UnpackPackage(filePath3, Path.Combine(path, "test-with-iteration.xlsx-unpacked"));
 
         } // static void Main(string[] args)
+
+
+        /// <summary>
+        /// make sure the returned string has only directory separators valid on the current platform
+        /// </summary>
+        /// <remarks>
+        /// <para>As a string representing a path segment</para>
+        /// </remarks>
+        public static string PathAdjustSeparators(string path)
+        {
+            string newPath =  path.Replace('/', Path.DirectorySeparatorChar);
+            newPath = newPath.Replace('\\', Path.DirectorySeparatorChar);
+            return newPath;
+        }
+
+        /// <summary>
+        /// replacement for Path.Combine that should work with mixed path separators
+        /// </summary>
+        /// <remarks>
+        /// <para>As a string representin a path segment</para>
+        /// <para>As a string representin a path segment</para>
+        /// </remarks>
+        public static string PathCombine(string first, string second)
+        {
+            string path1 = PathAdjustSeparators(first);
+            string path2 = PathAdjustSeparators(second);
+            // For Path.Cobine to work, the second path segment MUST NOT start with a DirectorySeparatorChar!
+            if (path2.StartsWith(Path.DirectorySeparatorChar))
+            {
+                path2 = path2.Substring(1);
+            }
+            return Path.Combine(path1, path2);
+        }
 
         public static void CreateTestDocument(string fileName, bool withIteration = false)
         {
@@ -80,9 +112,9 @@ namespace ClosedXML.WorkedExamples
             if (withIteration)
             {
                 // iteration with cells D3 and E3:   
-                ws.Cell("E3").FormulaA1 = "=(1.0+D3)*C3";
+                ws.Cell("E3").FormulaA1 = "=(0.8+D3)*C3";
                 // iteration with cells D5 and E5:
-                ws.Cell("E5").FormulaA1 = "=2.0-D5";
+                ws.Cell("E5").FormulaA1 = "=2.3-D5";
                 // enable and configure iteration:
                 wb.Iterate = true; // Default is flase (isn't it?)
                 wb.IterateCount = 150; // Default is 100
