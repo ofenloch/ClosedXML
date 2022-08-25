@@ -160,15 +160,15 @@ namespace ClosedXML.Excel
 
                 var iterate = calculationProperties.Iterate;
                 if (iterate != null)
-                    Iterate = calculationProperties.Iterate.Value;
+                    Iterate = iterate.Value;
 
                 var iterateCount = calculationProperties.IterateCount;
                 if (iterateCount != null)
-                    IterateCount = calculationProperties.IterateCount.Value;
+                    IterateCount = iterateCount.Value;
 
                 var iterateDelta = calculationProperties.IterateDelta;
                 if (iterateDelta != null)
-                    IterateDelta = calculationProperties.IterateDelta.Value;
+                    IterateDelta = iterateDelta.Value;
 
             }
 
