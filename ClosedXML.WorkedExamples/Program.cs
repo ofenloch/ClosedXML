@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using NUnit.Framework;
 using System;
 using System.IO;
 using System.IO.Packaging;
@@ -36,6 +37,8 @@ namespace ClosedXML.WorkedExamples
 
         static void Main(string[] args)
         {
+            Console.WriteLine("This is {0}.", Environment.GetCommandLineArgs());
+            Console.WriteLine(" current working directory is {0}", Directory.GetCurrentDirectory());
             var path = Program.BaseCreatedDirectory;
 
             var filePath1 = Path.Combine(path, "Formulae.xlsx");
@@ -47,8 +50,13 @@ namespace ClosedXML.WorkedExamples
             UnpackPackage(filePath2);
 
             var cwd = Directory.GetCurrentDirectory();
-            var filePath3 = PathCombine(cwd, "/ClosedXML.WorkedExamples/data/test-with-iteration.xlsx");
+            var filePath3 = PathCombine(cwd, "data/test-with-iteration.xlsx");
             UnpackPackage(filePath3, Path.Combine(path, "test-with-iteration.xlsx-unpacked"));
+
+            var filePath4 = Path.Combine(path, "SimpleIteration.xlsx");
+            CreateSimpleTestDocumentWithIteration(filePath4);
+            UnpackPackage(filePath4);
+
 
         } // static void Main(string[] args)
 
@@ -70,8 +78,8 @@ namespace ClosedXML.WorkedExamples
         /// replacement for Path.Combine that should work with mixed path separators
         /// </summary>
         /// <remarks>
-        /// <para>As a string representin a path segment</para>
-        /// <para>As a string representin a path segment</para>
+        /// <para>As a string representing a path segment</para>
+        /// <para>As a string representing a path segment</para>
         /// </remarks>
         public static string PathCombine(string first, string second)
         {
@@ -127,7 +135,47 @@ namespace ClosedXML.WorkedExamples
             wb.SaveAs(fileName);
         } // public static void CreateTestDocument(string fileName, bool withIteration = false)
 
+        public static void CreateSimpleTestDocumentWithIteration(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+            // The code below is from FormulaCachingTests.CircularReferenceRecalculationNeededDoesNotFail()
+            // and uses my addition to XLWorkbook from commit IDs
+            // 3d648276a378aa321ac5d972d5038ce19f92be7b and 4eacfd5acacb014fce730e328cb155cc86e8a358
+            // in fork  https://github.com/ofenloch/ClosedXML.git
+            //
+            // The result is a working XLSX file with "iteration" (a circular reference that is resolved by Excel).
+            using (var wb = new XLWorkbook())
+            {
+                var sheet = wb.Worksheets.Add("TestSheet");
+                var a1 = sheet.Cell("A1");
+                var a2 = sheet.Cell("A2");
+                var a3 = sheet.Cell("A3");
+                var a4 = sheet.Cell("A4");
 
+                a2.FormulaA1 = "=A1*10";
+                a3.FormulaA1 = "=A2*10";
+                a4.FormulaA1 = "=A3*10";
+                var _ = a4.Value;
+                a1.FormulaA1 = "=SUM(A2:A4)";
+                // enable and configure iteration:
+                wb.Iterate = true; // Default is flase (isn't it?)
+                wb.IterateCount = 150; // Default is 100
+                wb.IterateDelta = 0.01; // Default is 0.001
+                wb.SaveAs(fileName);
+                var recalcNeededA1 = a1.NeedsRecalculation;
+                var recalcNeededA2 = a2.NeedsRecalculation;
+                var recalcNeededA3 = a3.NeedsRecalculation;
+                var recalcNeededA4 = a4.NeedsRecalculation;
+
+                Assert.IsTrue(recalcNeededA1);
+                Assert.IsTrue(recalcNeededA2);
+                Assert.IsTrue(recalcNeededA3);
+                Assert.IsTrue(recalcNeededA4);
+            }
+        }
 
         public static void UnpackPackage(
             string filePath,
