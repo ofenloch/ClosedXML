@@ -1,0 +1,15 @@
+{
+    "configurations": [
+    {
+        "name": "template_for_gewi.exe",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/template_for_gewi/bin/Debug/net6.0/template_for_gewi.exe",
+        "args": [],
+        "cwd": "${workspaceFolder}",
+        "stopAtEntry": false,
+        "console": "internalConsole"
+    }
+    ]
+}
