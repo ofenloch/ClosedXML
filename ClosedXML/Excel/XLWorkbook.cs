@@ -210,7 +210,6 @@ namespace ClosedXML.Excel
         public Boolean ForceFullCalculation { get; set; }
         public Boolean FullCalculationOnLoad { get; set; }
         public Boolean FullPrecision { get; set; }
-
         /// <summary>
         ///   Gets or sets the workbook's Iterate optin
         ///   if true, Excel tries to resolve circular references in formulas by an iteration
