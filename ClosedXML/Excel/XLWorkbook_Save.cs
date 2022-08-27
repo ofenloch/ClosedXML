@@ -974,6 +974,13 @@ namespace ClosedXML.Excel
             if (ForceFullCalculation) workbook.CalculationProperties.ForceFullCalculation = ForceFullCalculation;
             if (FullCalculationOnLoad) workbook.CalculationProperties.FullCalculationOnLoad = FullCalculationOnLoad;
             if (FullPrecision) workbook.CalculationProperties.FullPrecision = FullPrecision;
+
+            if (Iterate) 
+            {
+                workbook.CalculationProperties.Iterate = Iterate;
+                if (IterateCount>0) workbook.CalculationProperties.IterateCount = IterateCount;
+                if (IterateDelta>0) workbook.CalculationProperties.IterateDelta = IterateDelta;
+            }
         }
 
         private void GenerateSharedStringTablePartContent(SharedStringTablePart sharedStringTablePart,
