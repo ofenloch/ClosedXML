@@ -18,7 +18,7 @@ namespace ClosedXML.WorkedExamples
             get
             {
                 //var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Created");
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "output/Created");
+                var path = PathCombine(Directory.GetCurrentDirectory(), "output/Created");
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
                 return path;
             }
@@ -29,7 +29,7 @@ namespace ClosedXML.WorkedExamples
             get
             {
                 //var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Modified");
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "output/Modified");
+                var path = PathCombine(Directory.GetCurrentDirectory(), "output/Modified");
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
                 return path;
             }
@@ -41,19 +41,19 @@ namespace ClosedXML.WorkedExamples
             Console.WriteLine(" current working directory is {0}", Directory.GetCurrentDirectory());
             var path = Program.BaseCreatedDirectory;
 
-            var filePath1 = Path.Combine(path, "Formulae.xlsx");
+            var filePath1 = PathCombine(path, "Formulae.xlsx");
             CreateTestDocument(filePath1, false);
             UnpackPackage(filePath1);
 
-            var filePath2 = Path.Combine(path, "FormulaeWithIteration.xlsx");
+            var filePath2 = PathCombine(path, "FormulaeWithIteration.xlsx");
             CreateTestDocument(filePath2, true);
             UnpackPackage(filePath2);
 
             var cwd = Directory.GetCurrentDirectory();
             var filePath3 = PathCombine(cwd, "data/test-with-iteration.xlsx");
-            UnpackPackage(filePath3, Path.Combine(path, "test-with-iteration.xlsx-unpacked"));
+            UnpackPackage(filePath3, PathCombine(path, "test-with-iteration.xlsx-unpacked"));
 
-            var filePath4 = Path.Combine(path, "SimpleIteration.xlsx");
+            var filePath4 = PathCombine(path, "SimpleIteration.xlsx");
             CreateSimpleTestDocumentWithIteration(filePath4);
             UnpackPackage(filePath4);
 
@@ -116,6 +116,10 @@ namespace ClosedXML.WorkedExamples
 
             ws.Cell("D3").FormulaA1 = "=IF(E3=0, 0.001, E3)";
             ws.Cell("D5").FormulaA1 = "=IF(E5=0, 0.1, E5)";
+            // TODO: This might be a better choice!
+            //   If E5 is a number and E5 is not 0 then use value of E5. Otherwise use 0.1.
+            //   I have to check this in my Windows machine with Excel.
+            //   ws.Cell("D5").FormulaA1 = "=IF( AND(ISNUMBER(E5), E5!=0) , E5, 0.1 )";
 
             if (withIteration)
             {
@@ -161,9 +165,9 @@ namespace ClosedXML.WorkedExamples
                 var _ = a4.Value;
                 a1.FormulaA1 = "=SUM(A2:A4)";
                 // enable and configure iteration:
-                wb.Iterate = true; // Default is flase (isn't it?)
-                wb.IterateCount = 150; // Default is 100
-                wb.IterateDelta = 0.01; // Default is 0.001
+                wb.Iterate = true; // Default is false in Excel (isn't it?)
+                wb.IterateCount = 150; // Default is 100 in Excel
+                wb.IterateDelta = 0.01; // Default is 0.001 in Excel
                 wb.SaveAs(fileName);
                 var recalcNeededA1 = a1.NeedsRecalculation;
                 var recalcNeededA2 = a2.NeedsRecalculation;
