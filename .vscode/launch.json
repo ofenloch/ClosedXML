@@ -10,6 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/ClosedXML.WorkedExamples/bin/Debug/net6.0/ClosedXML.WorkedExamples",
+            "enableStepFiltering": true,
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
