@@ -211,8 +211,23 @@ namespace ClosedXML.Excel
         public Boolean FullCalculationOnLoad { get; set; }
         public Boolean FullPrecision { get; set; }
 
+        /// <summary>
+        ///   Gets or sets the workbook's Iterate optin
+        ///   if true, Excel tries to resolve circular references in formulas by an iteration
+        ///   (defaults to false in Excel)
+        /// </summary>
         public Boolean Iterate { get; set; }
+        /// <summary>
+        ///   Gets or sets the workbook's IterateCount option
+        ///   maximum number of iteration steps
+        ///   (defaults to 100 in Excel)
+        /// </summary>
         public UInt32 IterateCount { get; set; }
+        /// <summary>
+        ///   Gets or sets the workbook's IterateDelta option
+        ///   step width in iterations
+        ///   (defaults to 0.001 in Excel)
+        /// </summary>
         public double IterateDelta { get; set; }
 
         /// <summary>
