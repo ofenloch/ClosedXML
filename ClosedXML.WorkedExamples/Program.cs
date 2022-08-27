@@ -116,6 +116,10 @@ namespace ClosedXML.WorkedExamples
 
             ws.Cell("D3").FormulaA1 = "=IF(E3=0, 0.001, E3)";
             ws.Cell("D5").FormulaA1 = "=IF(E5=0, 0.1, E5)";
+            // TODO: This might be a better choice!
+            //   If E5 is a number and E5 is not 0 then use value of E5. Otherwise use 0.1.
+            //   I have to check this in my Windows machine with Excel.
+            //   ws.Cell("D5").FormulaA1 = "=IF( AND(ISNUMBER(E5), E5!=0) , E5, 0.1 )";
 
             if (withIteration)
             {
