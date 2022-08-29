@@ -55,34 +55,51 @@ namespace TemplateForGeWi
                 uint fixed_cetaProd_row = iRow;
                 uint fixed_cetaProd_col = 15;
                 var fixed_cetaProd = sheet.Cell((int)iRow, (int)fixed_cetaProd_col).Value = 0.50;
+                string fixed_cetaProdAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_cetaProd_col);
+                fixed_cetaProdAddress = "$" + fixed_cetaProdAddress + "$" + fixed_cetaProd_row;
 
                 // create the product rows:
                 for (uint i = 0; i < nDataLines; i++)
                 {
                     iRow++;
                     string siRow = iRow.ToString();
+                    string sStreamNr = (i+1).ToString();
 
-                    sheet.Cell((int)iRow, 1).Value = "Row " + siRow; // column A 
-                    sheet.Cell((int)iRow, 2).Value = 2; // column B
-                    sheet.Cell((int)iRow, 3).Value = 3; // column C
-                    sheet.Cell((int)iRow, 4).Value = 4; // column D
-                    sheet.Cell((int)iRow, 5).Value = 5; // column E
-                    sheet.Cell((int)iRow, 6).Value = 6; // column F
-                    sheet.Cell((int)iRow, 7).Value = 7; // column G
-                    sheet.Cell((int)iRow, 8).Value = 8; // column H
-                    sheet.Cell((int)iRow, 9).Value = 9; // column I
-                    sheet.Cell((int)iRow, 10).Value = 10; // column J
-                    sheet.Cell((int)iRow, 11).Value = 11; // column K
-                    sheet.Cell((int)iRow, 12).Value = 12; // column L
-
+                    sheet.Cell((int)iRow, 1).Value = "f(prod_name_" + sStreamNr + ")"; // column A 
+                    sheet.Cell((int)iRow, 2).Value = "f(prod_massflow_" + sStreamNr + ")"; // column B
+                    sheet.Cell((int)iRow, 3).Value = "f(prod_temperature_" + sStreamNr + ")"; // column C
+                    sheet.Cell((int)iRow, 4).Value = "f(prod_pressure_" + sStreamNr + ")"; // column D
+                    sheet.Cell((int)iRow, 5).Value = "f(prod_density_" + sStreamNr + ")"; // column E
+                    sheet.Cell((int)iRow, 6).Value = "f(prod_viscosity_" + sStreamNr + ")"; // column F
+                    // column G
+                    var column_G = sheet.Cell((int)iRow, 7);
+                    column_G.FormulaA1 = "=IF(  AND( ISNUMBER(E" + siRow + "), E" + siRow + "<>0 ), B" + siRow + "/E" + siRow + ", -1 )"; // column G
+                    sheet.Cell((int)iRow, 8).Value = "f(prod_nominal_diameter_" + sStreamNr + ")"; // column H
+                    sheet.Cell((int)iRow, 9).Value = "f(prod_length_" + sStreamNr + ")"; // column I
+                    // column J
+                    var column_J = sheet.Cell((int)iRow, 10);
+                    column_J.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "), H" + siRow + "<>0), G" + siRow + "/3600/(3.14/4*(H" + siRow + "/1000)^2), -1 )"; // column J
+                    // column K
+                    var column_K = sheet.Cell((int)iRow, 11);
+                    column_K.FormulaA1 = "=IF( AND( ISNUMBER(F" + siRow + "), F" + siRow + "<>0), J" + siRow + "*H" + siRow + "/1000*E" + siRow + "/(F" + siRow + "/1000), -1)"; // column K
+                    sheet.Cell((int)iRow, 12).Value = 0.30; // column L
                     // column M
                     var column_M = sheet.Cell((int)iRow, 13);
                     column_M.FormulaA1 = "=IF( AND( ISNUMBER(N" + siRow + "), N" + siRow + "<>0) , N" + siRow + ", 0.00000001 )";
-                    //column_M.Value = 2.345;
                     // column N
                     var column_N = sheet.Cell((int)iRow, 14);
                     var dummy_M = column_M.Value;
                     column_N.FormulaA1 = "=IF( K" + siRow + ">2300.0 , 1.0/(2.0*(LOG(2.51/K" + siRow + "/(M" + siRow + ")^0.5+L11/H" + siRow + "/3.71)))^2 , 64/K" + siRow + " )";
+                    sheet.Cell((int)iRow, 15).Value = "f(prod_elbows_" + sStreamNr + ")"; // colum O (not 0 [Zero] but O as in Oliver)
+                    // column P
+                    var column_P = sheet.Cell((int)iRow, 16);
+                    column_P.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "),H" + siRow + "<>0), O" + siRow + "*" + fixed_cetaProdAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + ", -1)";
+                    // column Q
+                    var column_Q = sheet.Cell((int)iRow, 17);
+                    column_Q.FormulaA1 = "=IF( AND( ISNUMBER(J" + siRow + "),J" + siRow + "<>0), P" + siRow + "*E" + siRow + "/2*J" + siRow + "^2/100, -1)";
+                    // column R
+                    var column_R = sheet.Cell((int)iRow, 18);
+                    column_R.FormulaA1 = "=IF( AND( ISNUMBER(E" + siRow + "),E" + siRow + "<>0), Q" + siRow + "/E" + siRow + "/9.81*100, -1)";
                 } // for (uint i = 0; i < nDataLines; i++)
 
                 // insert nOffsetLines empty rows:
@@ -93,30 +110,50 @@ namespace TemplateForGeWi
                     sheet.Cell((int)iRow, 1).Value = "Row " + siRow;
                 }
 
-                // colum O (as in Oliver)
+                // colum O (not 0 [Zero] but O as in Oliver)
                 uint fixed_cetaVap_row = iRow;
                 uint fixed_cetaVap_col = 15;
                 var fixed_cetaVap = sheet.Cell((int)iRow, (int)fixed_cetaVap_col).Value = 0.50;
+                string fixed_cetaVapAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_cetaVap_col);
+                fixed_cetaVapAddress = "$" + fixed_cetaVapAddress + "$" + fixed_cetaVap_row;
 
                 // create vapour rows:
                 for (uint i = 0; i < nDataLines; i++)
                 {
                     iRow++;
                     string siRow = iRow.ToString();
-                    sheet.Cell((int)iRow, 1).Value = "Row " + siRow; // column A
+                    string sStreamNr = (i+1).ToString();
 
+                    sheet.Cell((int)iRow, 1).Value = "f(vap_name_" + sStreamNr + ")"; // column A
+                    sheet.Cell((int)iRow, 2).Value = "f(vap_massflow_" + sStreamNr + ")"; // column B
+                    sheet.Cell((int)iRow, 3).Value = "f(vap_temperature_" + sStreamNr + ")"; // column C
+                    sheet.Cell((int)iRow, 4).FormulaA1 = "=EXP(19.06597-4098.23/($C" + siRow + "+237.46532))"; // column D
+                    sheet.Cell((int)iRow, 5).FormulaA1 = "=(0.217*$D" + siRow + "/($C" + siRow + "+273.15))"; // column E
+                    sheet.Cell((int)iRow, 7).FormulaA1 = "=IF(E" + siRow + "<>0, B" + siRow + "/E" + siRow + ", -1)"; // column G
+                    sheet.Cell((int)iRow, 8).Value = "f(vap_nominal_diamater_" + sStreamNr + ")"; // column H
+                    sheet.Cell((int)iRow, 9).Value = "f(vap_length_" + sStreamNr + ")"; // column I
+                    sheet.Cell((int)iRow, 10).FormulaA1 = "=G" + siRow + "/3600/(3.14/4*(H" + siRow + "/1000)^2)"; // column J
+                    sheet.Cell((int)iRow, 11).FormulaA1 = "=J" + siRow + "*H" + siRow + "/1000*E" + siRow + "/(F" + siRow + "/1000)"; // column K
+                    sheet.Cell((int)iRow, 12).Value = 0.30; // column L
+                    sheet.Cell((int)iRow, 13).Value = ""; // column M
+                    sheet.Cell((int)iRow, 14).Value = 0.03; // column N
+                    sheet.Cell((int)iRow, 15).Value = "f(vap_elbows_" + sStreamNr + ")"; // colum O (not 0 [Zero] but O as in Oliver)
+                    // column P
                     var column_P = sheet.Cell((int)iRow, 16);
-                    column_P.FormulaA1 = "=O" + siRow + "*$O$" + fixed_cetaVap_row + " + N" + siRow + "* I" + siRow + " / H" + siRow;
-
+                    column_P.FormulaA1 = "=O" + siRow + "*" + fixed_cetaVapAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + "";
+                    // column Q
+                    var column_Q = sheet.Cell((int)iRow, 17);
+                    column_Q.FormulaA1 = "=P" + siRow + "*E" + siRow + "/2*J" + siRow + "^2/100";
                 }
 
                 // enable and configure iteration:
                 wb.Iterate = true; // Excel's default is false (isn't it?)
-                wb.IterateCount = 50; // Excel's default is 100
-                wb.IterateDelta = 0.01; // Excel's default is 0.001
+                wb.IterateCount = 100; // Excel's default is 100
+                wb.IterateDelta = 0.001; // Excel's default is 0.001
+                var saveOptions = new SaveOptions { EvaluateFormulasBeforeSaving = true };
                 // save the new workbook
                 Console.WriteLine("saving template as \"{0}\"", fileName);
-                wb.SaveAs(fileName);
+                wb.SaveAs(fileName, saveOptions);
             } // using (var wb = new XLWorkbook())
 
 
