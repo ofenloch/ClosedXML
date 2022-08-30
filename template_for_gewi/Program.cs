@@ -25,6 +25,12 @@ namespace TemplateForGeWi
             CreateTemplateForGeWi(filePath2);
             Utilities.UnpackPackage(filePath2);
 
+            // this is a demo:
+            var filePath3 = Utilities.PathCombine(path, "drag-coefficient.xlsx");
+            CreateDragCoefficientXLSX(filePath3);
+            Utilities.UnpackPackage(filePath3);
+
+
         } // static void Main(string[] args)
 
         public static void CreateTemplateForGeWi(string fileName)
@@ -214,9 +220,47 @@ namespace TemplateForGeWi
                 // correct:
                 sheet.Cell("D7").FormulaA1 = "= IF( AND(ISNUMBER(D1), D1<>0), D1, 1.001 )";
 
-                wb.SaveAs(fileName);
+                // enable and configure iteration:
+                wb.Iterate = true; // Excel's default is false (isn't it?)
+                wb.IterateCount = 100; // Excel's default is 100
+                wb.IterateDelta = 0.001; // Excel's default is 0.001
+                var saveOptions = new SaveOptions { EvaluateFormulasBeforeSaving = true };
+                // save the new workbook
+                Console.WriteLine("saving template as \"{0}\"", fileName);
+                wb.SaveAs(fileName, saveOptions);
             }
         } // public static void CreateSimpleTestFile(string fileName)
+
+
+        public static void CreateDragCoefficientXLSX(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+            var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Drag Coefficient");
+
+            // <math>\frac{1}{\sqrt{\zeta}}\ =\ -2\ log \left( \frac{2.51}{Re \sqrt{\zeta}} + \frac{K / d_i}{3.71} \right) </math>
+
+            worksheet.Cell("A1").Value = "inner diameter in mm";
+            worksheet.Cell("B1").Value = 60.0; // inner diameter in mm
+            worksheet.Cell("A2").Value = "velocity in m/s";
+            worksheet.Cell("B2").Value = 20.0; // velocity in m/s
+            worksheet.Cell("A3").Value = "Reynolds Number";
+            worksheet.Cell("B3").Value = 2330.0; // Reynolds Number
+
+            worksheet.Cell("A5").Value = "Zeta_0:";
+            worksheet.Cell("B5").FormulaA1 = "=IF( B6=0 ,0.00000001 , B6)";
+            worksheet.Cell("A6").Value = "Zeta_N:";
+            worksheet.Cell("B6").FormulaA1 = "=IF( B3>2300.0 , 1/( 2*(LOG(2.51/B3/(B5)^0.5+B2/B1/3.71)) )^2 , 64/B3)";
+
+            workbook.Iterate = true;
+            workbook.IterateCount = 100;
+            workbook.IterateDelta = 0.00001;
+
+            workbook.SaveAs(fileName);
+        } // public static void CreateDragCoefficientXLSX(string fileName)
 
     } // class TemplateGenerator
 
