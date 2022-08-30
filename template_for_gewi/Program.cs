@@ -51,12 +51,12 @@ namespace TemplateForGeWi
                     sheet.Cell((int)iRow, 1).Value = "Row " + siRow;
                 }
 
-                // colum O (not 0 [Zero] but O as in Oliver) holds cetaProd
-                uint fixed_cetaProd_row = iRow;
-                uint fixed_cetaProd_col = 15;
-                var fixed_cetaProd = sheet.Cell((int)iRow, (int)fixed_cetaProd_col).Value = 0.50;
-                string fixed_cetaProdAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_cetaProd_col);
-                fixed_cetaProdAddress = "$" + fixed_cetaProdAddress + "$" + fixed_cetaProd_row;
+                // colum O (not 0 [Zero] but O as in Oliver) holds zetaProd
+                uint fixed_zetaProd_row = iRow;
+                uint fixed_zetaProd_col = 15;
+                var fixed_zetaProd = sheet.Cell((int)iRow, (int)fixed_zetaProd_col).Value = 0.50;
+                string fixed_zetaProdAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_zetaProd_col);
+                fixed_zetaProdAddress = "$" + fixed_zetaProdAddress + "$" + fixed_zetaProd_row;
 
                 // create the product rows:
                 for (uint i = 0; i < nDataLines; i++)
@@ -98,12 +98,12 @@ namespace TemplateForGeWi
                     // column N
                     var column_N = sheet.Cell((int)iRow, 14);
                     var dummy_M = column_M.Value;
-                    column_N.FormulaA1 = "=IF( K" + siRow + ">2300.0 , 1.0/(2.0*(LOG(2.51/K" + siRow + "/(M" + siRow + ")^0.5+L11/H" + siRow + "/3.71)))^2 , 64/K" + siRow + " )";
+                    column_N.FormulaA1 = "=IF( K" + siRow + ">2300.0 , 1.0/( 2.0*( LOG( 2.51/K" + siRow + "/( M" + siRow + " )^0.5+L11/H" + siRow + "/3.71 ) ) )^2 , 64/K" + siRow + " )";
                     // colum O (not 0 [Zero] but O as in Oliver)
                     sheet.Cell((int)iRow, 15).Value = "f(prod_elbows_" + sStreamNr + ")";
                     // column P
                     var column_P = sheet.Cell((int)iRow, 16);
-                    column_P.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "),H" + siRow + "<>0), O" + siRow + "*" + fixed_cetaProdAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + ", -1)";
+                    column_P.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "),H" + siRow + "<>0), O" + siRow + "*" + fixed_zetaProdAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + ", -1)";
                     // column Q
                     var column_Q = sheet.Cell((int)iRow, 17);
                     column_Q.FormulaA1 = "=IF( AND( ISNUMBER(J" + siRow + "),J" + siRow + "<>0), P" + siRow + "*E" + siRow + "/2*J" + siRow + "^2/100, -1)";
@@ -120,12 +120,12 @@ namespace TemplateForGeWi
                     sheet.Cell((int)iRow, 1).Value = "Row " + siRow;
                 }
 
-                // colum O (not 0 [Zero] but O as in Oliver) holds cetaVap
-                uint fixed_cetaVap_row = iRow;
-                uint fixed_cetaVap_col = 15;
-                var fixed_cetaVap = sheet.Cell((int)iRow, (int)fixed_cetaVap_col).Value = 0.50;
-                string fixed_cetaVapAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_cetaVap_col);
-                fixed_cetaVapAddress = "$" + fixed_cetaVapAddress + "$" + fixed_cetaVap_row;
+                // colum O (not 0 [Zero] but O as in Oliver) holds zetaVap
+                uint fixed_zetaVap_row = iRow;
+                uint fixed_zetaVap_col = 15;
+                var fixed_zetaVap = sheet.Cell((int)iRow, (int)fixed_zetaVap_col).Value = 0.50;
+                string fixed_zetaVapAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_zetaVap_col);
+                fixed_zetaVapAddress = "$" + fixed_zetaVapAddress + "$" + fixed_zetaVap_row;
 
                 // create vapour rows:
                 for (uint i = 0; i < nDataLines; i++)
@@ -170,7 +170,7 @@ namespace TemplateForGeWi
                     sheet.Cell((int)iRow, 15).Value = "f(vap_elbows_" + sStreamNr + ")";
                     // column P
                     var column_P = sheet.Cell((int)iRow, 16);
-                    column_P.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "),H" + siRow + "<>0), O" + siRow + "*" + fixed_cetaProdAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + ", -1)";
+                    column_P.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "),H" + siRow + "<>0), O" + siRow + "*" + fixed_zetaProdAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + ", -1)";
                     // column Q
                     var column_Q = sheet.Cell((int)iRow, 17);
                     column_Q.FormulaA1 = "=IF( AND( ISNUMBER(J" + siRow + "),J" + siRow + "<>0), P" + siRow + "*E" + siRow + "/2*J" + siRow + "^2/100, -1)";
