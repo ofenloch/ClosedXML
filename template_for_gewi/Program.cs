@@ -22,14 +22,14 @@ namespace TemplateForGeWi
 
             // this is gonna be the real thing:
             var filePath2 = Utilities.PathCombine(path, "template-for-gewi.xlsx");
-            CreateTemplateForGeWi(filePath2, false);
+            CreateTemplateForGeWi(filePath2);
             Utilities.UnpackPackage(filePath2);
 
         } // static void Main(string[] args)
 
-        public static void CreateTemplateForGeWi(string fileName, bool withIteration = false)
+        public static void CreateTemplateForGeWi(string fileName)
         {
-            string sheetName = withIteration ? "Template With Iteration" : "Template";
+            string sheetName = "Leitungsliste";
             uint nOffsetLines = 10;
             uint nDataLines = 30;
             if (File.Exists(fileName))
@@ -185,10 +185,7 @@ namespace TemplateForGeWi
                 Console.WriteLine("saving template as \"{0}\"", fileName);
                 wb.SaveAs(fileName, saveOptions);
             } // using (var wb = new XLWorkbook())
-
-
-
-        } // public static void CreateTemplateForGeWi(string fileName, bool withIteration = false)
+        } // public static void CreateTemplateForGeWi(string fileName)
 
         // This is just for testing if I'm doing it correctly:
         public static void CreateSimpleTestFile(string fileName)
