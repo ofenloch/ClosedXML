@@ -248,7 +248,7 @@ namespace TemplateForGeWi
             worksheet.Cell("A2").Value = "velocity in m/s";
             worksheet.Cell("B2").Value = 20.0; // velocity in m/s
             worksheet.Cell("A3").Value = "Reynolds Number";
-            worksheet.Cell("B3").Value = 2230.0; // Reynolds Number
+            worksheet.Cell("B3").Value = 2331.0; // Reynolds Number
 
             worksheet.Cell("A5").Value = "Zeta_0:";
             // We have to initialize the iteration properly to make it work.
