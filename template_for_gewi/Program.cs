@@ -98,13 +98,16 @@ namespace TemplateForGeWi
                     column_K.FormulaA1 = "=IF( AND( ISNUMBER(F" + siRow + "), F" + siRow + "<>0), J" + siRow + "*H" + siRow + "/1000*E" + siRow + "/(F" + siRow + "/1000), -1)"; // column K
                     // column L                                                                                                                                                                                 // column L
                     sheet.Cell((int)iRow, 12).Value = 0.30;
-                    // column M
+                    // column M (initial value for iteration zeta_0)
+                    // We have to initialize the iteration properly to make it work. This means, cell M MUST ALWAYS 
+                    // have a numeric value in the beginnimg. To assure this is always the case, we check if cell N 
+                    // is a numeric value and not zero. If these conditions are not met, we set cell M to 0.00000001.
                     var column_M = sheet.Cell((int)iRow, 13);
-                    column_M.FormulaA1 = "=IF( AND( ISNUMBER(N" + siRow + "), N" + siRow + "<>0) , N" + siRow + ", 0.00000001 )";
-                    // column N
+                    column_M.FormulaA1 = "=IF( AND( ISNUMBER(N" + siRow + "), N" + siRow + "<>0 ) , N" + siRow + ", 0.00000001 )";
+                    // column N (iterative calculation of zeta)
                     var column_N = sheet.Cell((int)iRow, 14);
                     var dummy_M = column_M.Value;
-                    column_N.FormulaA1 = "=IF( K" + siRow + ">2300.0 , 1.0/( 2.0*( LOG( 2.51/K" + siRow + "/( M" + siRow + " )^0.5+L11/H" + siRow + "/3.71 ) ) )^2 , 64/K" + siRow + " )";
+                    column_N.FormulaA1 = "=IF( K" + siRow + ">2300.0 , 1.0/( 2.0*( LOG( 2.51/K" + siRow + "/( M" + siRow + " )^0.5+L" + siRow + "/H" + siRow + "/3.71 ) ) )^2 , 64/K" + siRow + " )";
                     // colum O (not 0 [Zero] but O as in Oliver)
                     sheet.Cell((int)iRow, 15).Value = "f(prod_elbows_" + sStreamNr + ")";
                     // column P
