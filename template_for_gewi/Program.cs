@@ -248,10 +248,13 @@ namespace TemplateForGeWi
             worksheet.Cell("A2").Value = "velocity in m/s";
             worksheet.Cell("B2").Value = 20.0; // velocity in m/s
             worksheet.Cell("A3").Value = "Reynolds Number";
-            worksheet.Cell("B3").Value = 2330.0; // Reynolds Number
+            worksheet.Cell("B3").Value = 2230.0; // Reynolds Number
 
             worksheet.Cell("A5").Value = "Zeta_0:";
-            worksheet.Cell("B5").FormulaA1 = "=IF( B6=0 ,0.00000001 , B6)";
+            // We have to initialize the iteration properly to make it work.
+            // This means, cell B5 MUST have a numeric value in the beginnimg. 
+            // To assure this is always the case, we check i B6 is a numeric value and not zero.
+            worksheet.Cell("B5").FormulaA1 = "=IF( AND( ISNUMBER(B6), B6<>0 ) , B6, 0.00000001 )";
             worksheet.Cell("A6").Value = "Zeta_N:";
             worksheet.Cell("B6").FormulaA1 = "=IF( B3>2300.0 , 1/( 2*(LOG(2.51/B3/(B5)^0.5+B2/B1/3.71)) )^2 , 64/B3)";
 
