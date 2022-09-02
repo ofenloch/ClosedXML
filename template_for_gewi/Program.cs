@@ -84,6 +84,7 @@ namespace TemplateForGeWi
                     // column F
                     sheet.Cell((int)iRow, 6).Value = "f(prod_viscosity_" + sStreamNr + ")";
                     // column G
+                    //         =B11/E11
                     var column_G = sheet.Cell((int)iRow, 7);
                     column_G.FormulaA1 = "=IF(  AND( ISNUMBER(E" + siRow + "), E" + siRow + "<>0 ), B" + siRow + "/E" + siRow + ", -1 )";
                     // column H
@@ -91,32 +92,39 @@ namespace TemplateForGeWi
                     // column I
                     sheet.Cell((int)iRow, 9).Value = "f(prod_length_" + sStreamNr + ")";
                     // column J
+                    //         =G11/3600/(3,14/4*(H11/1000)^2)
                     var column_J = sheet.Cell((int)iRow, 10);
                     column_J.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "), H" + siRow + "<>0), G" + siRow + "/3600/(3.14/4*(H" + siRow + "/1000)^2), -1 )"; // column J
                     // column K
+                    //         =J11*H11/1000*E11/(F11/1000)
                     var column_K = sheet.Cell((int)iRow, 11);
                     column_K.FormulaA1 = "=IF( AND( ISNUMBER(F" + siRow + "), F" + siRow + "<>0), J" + siRow + "*H" + siRow + "/1000*E" + siRow + "/(F" + siRow + "/1000), -1)"; // column K
                     // column L                                                                                                                                                                                 // column L
                     sheet.Cell((int)iRow, 12).Value = 0.30;
                     // column M (initial value for iteration zeta_0)
+                    //         =WENN(N11=0;0,00000001;N11)
                     // We have to initialize the iteration properly to make it work. This means, cell M MUST ALWAYS 
                     // have a numeric value in the beginnimg. To assure this is always the case, we check if cell N 
                     // is a numeric value and not zero. If these conditions are not met, we set cell M to 0.00000001.
                     var column_M = sheet.Cell((int)iRow, 13);
                     column_M.FormulaA1 = "=IF( AND( ISNUMBER(N" + siRow + "), N" + siRow + "<>0 ) , N" + siRow + ", 0.00000001 )";
                     // column N (iterative calculation of zeta)
+                    //         =WENN(K11>2300;1/(2*(LOG(2,51/K11/(M11)^0,5+L11/H11/3,71)))^2;64/K11)
                     var column_N = sheet.Cell((int)iRow, 14);
                     var dummy_M = column_M.Value;
                     column_N.FormulaA1 = "=IF( K" + siRow + ">2300.0 , 1.0/( 2.0*( LOG( 2.51/K" + siRow + "/( M" + siRow + " )^0.5+L" + siRow + "/H" + siRow + "/3.71 ) ) )^2 , 64/K" + siRow + " )";
                     // colum O (not 0 [Zero] but O as in Oliver)
                     sheet.Cell((int)iRow, 15).Value = "f(prod_elbows_" + sStreamNr + ")";
                     // column P
+                    //         =O11*$O$10+N11*I11/H11
                     var column_P = sheet.Cell((int)iRow, 16);
                     column_P.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "),H" + siRow + "<>0), O" + siRow + "*" + fixed_zetaProdAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + ", -1)";
                     // column Q
+                    //         =P11*E11/2*J11^2/100
                     var column_Q = sheet.Cell((int)iRow, 17);
                     column_Q.FormulaA1 = "=IF( AND( ISNUMBER(J" + siRow + "),J" + siRow + "<>0), P" + siRow + "*E" + siRow + "/2*J" + siRow + "^2/100, -1)";
                     // column R
+                    //         =Q11/E11/9,81*100
                     var column_R = sheet.Cell((int)iRow, 18);
                     column_R.FormulaA1 = "=IF( AND( ISNUMBER(E" + siRow + "),E" + siRow + "<>0), Q" + siRow + "/E" + siRow + "/9.81*100, -1)";
                 } // for (uint i = 0; i < nDataLines; i++)
@@ -150,12 +158,15 @@ namespace TemplateForGeWi
                     // column C
                     sheet.Cell((int)iRow, 3).Value = "f(vap_temperature_" + sStreamNr + ")";
                     // column D
+                    //         =EXP(19,06597-4098,23/($C33+237,46532))
                     sheet.Cell((int)iRow, 4).FormulaA1 = "=IF( ISNUMBER($C" + siRow + ") , EXP( 19.06597-4098.23/($C" + siRow + "+237.46532) ), -1 )";
                     // column E
+                    //         =(0,217*$D33/($C33+273,15))
                     sheet.Cell((int)iRow, 5).FormulaA1 = "=IF( ISNUMBER($C" + siRow + "), (0.217*$D" + siRow + "/($C" + siRow + "+273.15)), -1)";
                     // column F
                     sheet.Cell((int)iRow, 6).Value = "f(vap_viscosity_" + sStreamNr + ")";
                     // column G
+                    //         =B33/E33
                     var column_G = sheet.Cell((int)iRow, 7);
                     column_G.FormulaA1 = "=IF(  AND( ISNUMBER(E" + siRow + "), E" + siRow + "<>0 ), B" + siRow + "/E" + siRow + ", -1 )";
                     // column H
@@ -163,24 +174,27 @@ namespace TemplateForGeWi
                     // column I
                     sheet.Cell((int)iRow, 9).Value = "f(vap_length_" + sStreamNr + ")";
                     // column J
+                    //         =G33/3600/(3,14/4*(H33/1000)^2)
                     var column_J = sheet.Cell((int)iRow, 10);
                     column_J.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "), H" + siRow + "<>0), G" + siRow + "/3600/(3.14/4*(H" + siRow + "/1000)^2), -1 )"; // column J
                     // column K
                     var column_K = sheet.Cell((int)iRow, 11);
-                    column_K.FormulaA1 = "=IF( AND( ISNUMBER(F" + siRow + "), F" + siRow + "<>0), J" + siRow + "*H" + siRow + "/1000*E" + siRow + "/(F" + siRow + "/1000), -1)"; // column K
+                    column_K.Value = "";
                     // column L
                     sheet.Cell((int)iRow, 12).Value = 0.30;
                     // column M
                     var column_M = sheet.Cell((int)iRow, 13);
-                    column_M.FormulaA1 = "=IF( AND( ISNUMBER(N" + siRow + "), N" + siRow + "<>0) , N" + siRow + ", 0.00000001 )";
+                    column_M.Value = "";
                     // column N
                     sheet.Cell((int)iRow, 14).Value = 0.03;
                     // colum O (not 0 [Zero] but O as in Oliver)
                     sheet.Cell((int)iRow, 15).Value = "f(vap_elbows_" + sStreamNr + ")";
                     // column P
+                    //         =O33*$O$32+N33*I33/H33
                     var column_P = sheet.Cell((int)iRow, 16);
                     column_P.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "),H" + siRow + "<>0), O" + siRow + "*" + fixed_zetaProdAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + ", -1)";
                     // column Q
+                    //         =P33*E33/2*J33^2/100
                     var column_Q = sheet.Cell((int)iRow, 17);
                     column_Q.FormulaA1 = "=IF( AND( ISNUMBER(J" + siRow + "),J" + siRow + "<>0), P" + siRow + "*E" + siRow + "/2*J" + siRow + "^2/100, -1)";
                 }
