@@ -164,6 +164,12 @@ namespace ClosedXML.Tests.Examples
         }
 
         [Test]
+        public void Iteration()
+        {
+            TestHelper.RunTestExample<Iteration>(@"Misc\Iteration.xlsx");
+        }
+
+        [Test]
         public void LambdaExpressions()
         {
             TestHelper.RunTestExample<LambdaExpressions>(@"Misc\LambdaExpressions.xlsx");
