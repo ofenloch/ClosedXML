@@ -452,5 +452,41 @@ namespace ClosedXML.Tests.Excel
 
             Assert.Throws<ObjectDisposedException>(() => Console.WriteLine(wb.Worksheets.First().FirstCell().Value));
         }
+
+        [Test]
+        [TestCase(true, (uint)5, 0.01)]
+        [TestCase(true, (uint)123, 0.000001)]
+        [TestCase(true, (uint)152, 0.0001)]
+        [TestCase(false, (uint)155, 0.0001)]
+        public void IterationSettings(bool iterate, uint iterateCount, double iterateDelta)
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (var wb = new XLWorkbook())
+                {
+                    var ws = wb.AddWorksheet("Iteration");
+                    ws.FirstCell().SetValue("Hello, Iteration!");
+                    wb.Iterate = iterate;
+                    wb.IterateCount = iterateCount;
+                    wb.IterateDelta = iterateDelta;
+                    wb.SaveAs(ms);
+                }
+                using (var wb = new XLWorkbook(ms))
+                {
+                    Assert.AreEqual(iterate, wb.Iterate);
+                    if (wb.Iterate == true)
+                    {
+                        Assert.AreEqual(iterateCount, wb.IterateCount);
+                        Assert.AreEqual(iterateDelta, wb.IterateDelta);
+                    }
+                    else
+                    {
+                        Assert.AreEqual(0, wb.IterateCount);
+                        Assert.AreEqual(0, wb.IterateDelta);
+                    }
+                }
+            } // using (var ms = new MemoryStream())
+        } // public void IterationSettings()
+
     }
 }
