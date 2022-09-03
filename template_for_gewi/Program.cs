@@ -230,12 +230,15 @@ namespace TemplateForGeWi
                 d4.FormulaA1 = "=IF( D1 > 3.5, 10, 20 )";
                 // correct: 
                 sheet.Cell("D5").FormulaA1 = "= IF( D1 < 3.5, 10, 20 )";
+                var dummy = sheet.Cell("D5").Value;
                 // correct:
                 sheet.Cell("E5").FormulaA1 = "= IF( ISNUMBER(C1), \"C1 is a1 number\", \"C1 is not a1 number\" )";
                 // correct:
                 sheet.Cell("D6").FormulaA1 = "= IF( AND(ISNUMBER(C1), C1>1.1), C1, 0.001 )";
+                dummy = sheet.Cell("D6").Value;
                 // correct:
                 sheet.Cell("D7").FormulaA1 = "= IF( AND(ISNUMBER(D1), D1<>0), D1, 1.001 )";
+                dummy = sheet.Cell("D7").Value;
 
                 // enable and configure iteration:
                 wb.Iterate = true; // Excel's default is false (isn't it?)
@@ -245,7 +248,20 @@ namespace TemplateForGeWi
                 // save the new workbook
                 Console.WriteLine("saving template as \"{0}\"", fileName);
                 wb.SaveAs(fileName, saveOptions);
-            }
+            } // using (var wb = new XLWorkbook())
+
+            // re-open the workbook and see what's in there
+            using (var wb = new XLWorkbook(fileName))
+            {
+                var sheet = wb.Worksheets.Worksheet("Formulae");
+                var dummy = sheet.Cell("D5").Value;
+                Console.WriteLine("Cell D5 has (cached) value \"{0}\"", dummy);
+                dummy = sheet.Cell("D6").Value;
+                Console.WriteLine("Cell D6 has (cached) value \"{0}\"", dummy);
+                dummy = sheet.Cell("D7").Value;
+                Console.WriteLine("Cell D7 has (cached) value \"{0}\"", dummy);
+            } // using (var wb = new XLWorkbook(fileName))
+
         } // public static void CreateSimpleTestFile(string fileName)
 
 
