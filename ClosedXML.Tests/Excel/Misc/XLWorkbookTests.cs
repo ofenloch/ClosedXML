@@ -460,16 +460,48 @@ namespace ClosedXML.Tests.Excel
         [TestCase(false, (uint)155, 0.0001)]
         public void IterationSettings(bool iterate, uint iterateCount, double iterateDelta)
         {
+            var saveOptions = new SaveOptions { EvaluateFormulasBeforeSaving = true };
             using (var ms = new MemoryStream())
             {
                 using (var wb = new XLWorkbook())
                 {
                     var ws = wb.AddWorksheet("Iteration");
                     ws.FirstCell().SetValue("Hello, Iteration!");
+                    var A2 = ws.Cell("A2");
+                    var A3 = ws.Cell("A3");
+                    A2.FormulaA1 = "=IF( ISNUMBER(A3) , A3 + 1 , 20 )";
+                    var dummy = A2.Value;
+                    A3.FormulaA1 = "=IF( ISNUMBER(A2) , A2 + 1 , 10 )";
+
                     wb.Iterate = iterate;
                     wb.IterateCount = iterateCount;
                     wb.IterateDelta = iterateDelta;
-                    wb.SaveAs(ms);
+
+                    ws.Cell("A5").Value = "wb.Iterate:";
+                    ws.Cell("B5").Value = wb.Iterate;
+                    ws.Cell("A6").Value = "wb.IterateCount:";
+                    ws.Cell("B6").Value = wb.IterateCount;
+                    ws.Cell("A7").Value = "wb.IterateDelta:";
+                    ws.Cell("B7").Value = wb.IterateDelta;
+
+                    if (iterate == false)
+                    {
+                        Assert.Throws<InvalidOperationException>(() =>
+                        {
+                            dummy = A2.Value;
+                        });
+                        Assert.Throws<InvalidOperationException>(() =>
+                        {
+                            dummy = A3.Value;
+                        });
+                    }
+                    else
+                    {
+                        dummy = A2.Value;
+                        dummy = A3.Value;
+                    }
+
+                    wb.SaveAs(ms, saveOptions);
                 }
                 using (var wb = new XLWorkbook(ms))
                 {
@@ -478,15 +510,31 @@ namespace ClosedXML.Tests.Excel
                     {
                         Assert.AreEqual(iterateCount, wb.IterateCount);
                         Assert.AreEqual(iterateDelta, wb.IterateDelta);
+
+                        // TODO: This should work:
+                        var dummy = wb.Worksheet(1).Cell("A2").Value;
+                        Assert.AreEqual(28, dummy);
+                        dummy = wb.Worksheet(1).Cell("A3").Value;
+                        Assert.AreEqual(29, dummy);
                     }
                     else
                     {
                         Assert.AreEqual(0, wb.IterateCount);
                         Assert.AreEqual(0, wb.IterateDelta);
+
+                        Assert.Throws<InvalidOperationException>(() =>
+                        {
+                            var dummy = wb.Worksheet(1).Cell("A2").Value;
+                        });
+                        Assert.Throws<InvalidOperationException>(() =>
+                        {
+                            var dummy = wb.Worksheet(1).Cell("A3").Value;
+                        });
+                        
                     }
                 }
             } // using (var ms = new MemoryStream())
-        } // public void IterationSettings()
+        } // public void IterationSettings(bool iterate, uint iterateCount, double iterateDelta)
 
     }
 }
