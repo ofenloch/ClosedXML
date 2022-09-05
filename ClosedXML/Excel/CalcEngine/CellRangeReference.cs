@@ -49,8 +49,8 @@ namespace ClosedXML.Excel.CalcEngine
             {
                 if (cell.Worksheet.Workbook.Iterate == true)
                 {
-                    // handle workseeht with iteration
-                    // TODO: Thise needs improvement!!!
+                    // handle worksheet with iteration
+                    // TODO: This needs improvement!!!
                     if(cell.CachedValue != null)
                     {
                         return cell.CachedValue;
