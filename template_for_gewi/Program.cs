@@ -108,10 +108,10 @@ namespace TemplateForGeWi
                     // is a numeric value and not zero. If these conditions are not met, we set cell M to 0.00000001.
                     var column_M = sheet.Cell((int)iRow, 13);
                     column_M.FormulaA1 = "=IF( AND( ISNUMBER(N" + siRow + "), N" + siRow + "<>0 ) , N" + siRow + ", 0.00000001 )";
+                    var dummy_M = column_M.Value;
                     // column N (iterative calculation of zeta)
                     //         =WENN(K11>2300;1/(2*(LOG(2,51/K11/(M11)^0,5+L11/H11/3,71)))^2;64/K11)
                     var column_N = sheet.Cell((int)iRow, 14);
-                    var dummy_M = column_M.Value;
                     column_N.FormulaA1 = "=IF( K" + siRow + ">2300.0 , 1.0/( 2.0*( LOG( 2.51/K" + siRow + "/( M" + siRow + " )^0.5+L" + siRow + "/H" + siRow + "/3.71 ) ) )^2 , 64/K" + siRow + " )";
                     // colum O (not 0 [Zero] but O as in Oliver)
                     sheet.Cell((int)iRow, 15).Value = "f(prod_elbows_" + sStreamNr + ")";
