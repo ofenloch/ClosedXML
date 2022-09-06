@@ -25,11 +25,15 @@ namespace TemplateForGeWi
             CreateTemplateForGeWi(filePath2);
             Utilities.UnpackPackage(filePath2);
 
-            // this is a demo:
+            // this is an iteration demo:
             var filePath3 = Utilities.PathCombine(path, "drag-coefficient.xlsx");
             CreateDragCoefficientXLSX(filePath3);
             Utilities.UnpackPackage(filePath3);
 
+            // this is a simple file for comparing:
+            var filePath4 = Utilities.PathCombine(path, "basic-table.xlsx");
+            CreateBasicTable(filePath4);
+            Utilities.UnpackPackage(filePath4);
 
         } // static void Main(string[] args)
 
@@ -59,7 +63,7 @@ namespace TemplateForGeWi
 
                 sheet.Cell("A8").Value = "Bezeichnung";
                 sheet.Cell("A9").Value = "";
-                
+
                 sheet.Cell("B8").Value = "Massenstrom";
                 sheet.Cell("B9").Value = "[kg/h]";
 
@@ -123,7 +127,7 @@ namespace TemplateForGeWi
                 fixed_zetaProd.Style.Fill.BackgroundColor = XLColor.LightYellow;
                 string fixed_zetaProdAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_zetaProd_col);
                 fixed_zetaProdAddress = "$" + fixed_zetaProdAddress + "$" + fixed_zetaProd_row;
-                var fixed_zetaProdLabel = sheet.Cell((int)iRow, (int)fixed_zetaProd_col-1);
+                var fixed_zetaProdLabel = sheet.Cell((int)iRow, (int)fixed_zetaProd_col - 1);
                 fixed_zetaProdLabel.Value = "zeta=";
                 fixed_zetaProdLabel.Style.Fill.BackgroundColor = XLColor.LightYellow;
 
@@ -208,7 +212,7 @@ namespace TemplateForGeWi
                 fixed_zetaVap.Style.Fill.BackgroundColor = XLColor.LightYellow;
                 string fixed_zetaVapAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_zetaVap_col);
                 fixed_zetaVapAddress = "$" + fixed_zetaVapAddress + "$" + fixed_zetaVap_row;
-                var fixed_zetaVapLabel = sheet.Cell((int)iRow, (int)fixed_zetaVap_col-1);
+                var fixed_zetaVapLabel = sheet.Cell((int)iRow, (int)fixed_zetaVap_col - 1);
                 fixed_zetaVapLabel.Value = "zeta=";
                 fixed_zetaVapLabel.Style.Fill.BackgroundColor = XLColor.LightYellow;
 
@@ -365,6 +369,46 @@ namespace TemplateForGeWi
 
             workbook.SaveAs(fileName);
         } // public static void CreateDragCoefficientXLSX(string fileName)
+
+        public static void CreateBasicTable(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+            using (var workbook = new XLWorkbook())
+            {
+                var ws = workbook.Worksheets.Add("Basic Table");
+                // Title
+                ws.Cell("B2").Value = "Contacts";
+
+                // First Names
+                ws.Cell("B3").Value = "FName";
+                ws.Cell("B4").Value = "John";
+                ws.Cell("B5").Value = "Hank";
+                ws.Cell("B6").Value = "Dagny";
+
+                // Last Names
+                ws.Cell("C3").Value = "LName";
+                ws.Cell("C4").Value = "Galt";
+                ws.Cell("C5").Value = "Rearden";
+                ws.Cell("C6").Value = "Taggart";
+
+                // Id
+                ws.Cell("D3").Value = "ID";
+                ws.Cell("D4").Value = 3.141592653589;
+                ws.Cell("D5").Value = 2.718281828459;
+                ws.Cell("D6").Value = 1.414213562373;
+
+                // Formula
+                ws.Cell("E3").Value = "Formula";
+                ws.Cell("E4").FormulaA1 = "=D6*D5";
+                ws.Cell("E5").FormulaA1 = "=D6*D4";
+                ws.Cell("E6").FormulaA1 = "=D6*D3";
+
+                workbook.SaveAs(fileName);
+            }
+        } // public static void CreateBasicTable(string fileName)
 
     } // class TemplateGenerator
 
