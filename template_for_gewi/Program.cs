@@ -87,7 +87,7 @@ namespace TemplateForGeWi
                 sheet.Cell("J8").Value = "Geschw.";
                 sheet.Cell("J9").Value = "[m/s]";
 
-                sheet.Cell("K8").Value = "Re";
+                sheet.Cell("K8").Value = "Reynolds-Zahl";
                 sheet.Cell("K9").Value = "[1]";
 
                 sheet.Cell("L8").Value = "Rauhigkeit";
@@ -100,10 +100,10 @@ namespace TemplateForGeWi
                 sheet.Cell("N9").Value = "[1]";
 
                 sheet.Cell("O8").Value = "Anz. Krümmer";
-                sheet.Cell("O9").Value = "zeta =";
+                sheet.Cell("O9").Value = "[1]";
 
                 sheet.Cell("P8").Value = "Verl.beiwert";
-                sheet.Cell("P9").Value = "tot";
+                sheet.Cell("P9").Value = "tot.";
 
                 sheet.Cell("Q8").Value = "Druckverlust";
                 sheet.Cell("Q9").Value = "mbar";
@@ -117,10 +117,15 @@ namespace TemplateForGeWi
 
                 // colum O (not 0 [Zero] but O as in Oliver) holds zetaProd
                 uint fixed_zetaProd_row = iRow;
-                uint fixed_zetaProd_col = 15;
-                var fixed_zetaProd = sheet.Cell((int)iRow, (int)fixed_zetaProd_col).Value = 0.50;
+                uint fixed_zetaProd_col = 22;
+                var fixed_zetaProd = sheet.Cell((int)iRow, (int)fixed_zetaProd_col);
+                fixed_zetaProd.Value = 0.50;
+                fixed_zetaProd.Style.Fill.BackgroundColor = XLColor.LightYellow;
                 string fixed_zetaProdAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_zetaProd_col);
                 fixed_zetaProdAddress = "$" + fixed_zetaProdAddress + "$" + fixed_zetaProd_row;
+                var fixed_zetaProdLabel = sheet.Cell((int)iRow, (int)fixed_zetaProd_col-1);
+                fixed_zetaProdLabel.Value = "zeta=";
+                fixed_zetaProdLabel.Style.Fill.BackgroundColor = XLColor.LightYellow;
 
                 // create the product rows:
                 for (uint i = 0; i < nDataLines; i++)
@@ -197,10 +202,15 @@ namespace TemplateForGeWi
 
                 // colum O (not 0 [Zero] but O as in Oliver) holds zetaVap
                 uint fixed_zetaVap_row = iRow;
-                uint fixed_zetaVap_col = 15;
-                var fixed_zetaVap = sheet.Cell((int)iRow, (int)fixed_zetaVap_col).Value = 0.50;
+                uint fixed_zetaVap_col = 22;
+                var fixed_zetaVap = sheet.Cell((int)iRow, (int)fixed_zetaVap_col);
+                fixed_zetaVap.Value = 0.50;
+                fixed_zetaVap.Style.Fill.BackgroundColor = XLColor.LightYellow;
                 string fixed_zetaVapAddress = XLHelper.GetColumnLetterFromNumber((int)fixed_zetaVap_col);
                 fixed_zetaVapAddress = "$" + fixed_zetaVapAddress + "$" + fixed_zetaVap_row;
+                var fixed_zetaVapLabel = sheet.Cell((int)iRow, (int)fixed_zetaVap_col-1);
+                fixed_zetaVapLabel.Value = "zeta=";
+                fixed_zetaVapLabel.Style.Fill.BackgroundColor = XLColor.LightYellow;
 
                 // create vapour rows:
                 for (uint i = 0; i < nDataLines; i++)
@@ -250,7 +260,7 @@ namespace TemplateForGeWi
                     // column P
                     //         =O33*$O$32+N33*I33/H33
                     var column_P = sheet.Cell((int)iRow, 16);
-                    column_P.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "),H" + siRow + "<>0), O" + siRow + "*" + fixed_zetaProdAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + ", -1)";
+                    column_P.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "),H" + siRow + "<>0), O" + siRow + "*" + fixed_zetaVapAddress + "+N" + siRow + "*I" + siRow + "/H" + siRow + ", -1)";
                     // column Q
                     //         =P33*E33/2*J33^2/100
                     var column_Q = sheet.Cell((int)iRow, 17);
