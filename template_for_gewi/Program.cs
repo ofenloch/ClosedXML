@@ -57,6 +57,64 @@ namespace TemplateForGeWi
                     sheet.Cell((int)iRow, 1).Value = "Row " + siRow;
                 }
 
+                sheet.Cell("A8").Value = "Bezeichnung";
+                sheet.Cell("A9").Value = "";
+                
+                sheet.Cell("B8").Value = "Massenstrom";
+                sheet.Cell("B9").Value = "[kg/h]";
+
+                sheet.Cell("C8").Value = "Temperatur";
+                sheet.Cell("C9").Value = "[°C]";
+
+                sheet.Cell("D8").Value = "Druck";
+                sheet.Cell("D9").Value = "[mbar]";
+
+                sheet.Cell("E8").Value = "Dichte";
+                sheet.Cell("E9").Value = "[kg/m³]";
+
+                sheet.Cell("F8").Value = "Viskosität";
+                sheet.Cell("F9").Value = "[cP]";
+
+                sheet.Cell("G8").Value = "Volumenstrom";
+                sheet.Cell("G9").Value = "[m³/h]";
+
+                sheet.Cell("H8").Value = "Nennweite";
+                sheet.Cell("H9").Value = "[mm]";
+
+                sheet.Cell("I8").Value = "ca. Länge";
+                sheet.Cell("I9").Value = "[mm]";
+
+                sheet.Cell("J8").Value = "Geschw.";
+                sheet.Cell("J9").Value = "[m/s]";
+
+                sheet.Cell("K8").Value = "Re";
+                sheet.Cell("K9").Value = "[1]";
+
+                sheet.Cell("L8").Value = "Rauhigkeit";
+                sheet.Cell("L9").Value = "[mm]";
+
+                sheet.Cell("M8").Value = "lambda_0";
+                sheet.Cell("M9").Value = "[1]";
+
+                sheet.Cell("N8").Value = "lambda";
+                sheet.Cell("N9").Value = "[1]";
+
+                sheet.Cell("O8").Value = "Anz. Krümmer";
+                sheet.Cell("O9").Value = "zeta =";
+
+                sheet.Cell("P8").Value = "Verl.beiwert";
+                sheet.Cell("P9").Value = "tot";
+
+                sheet.Cell("Q8").Value = "Druckverlust";
+                sheet.Cell("Q9").Value = "mbar";
+
+                sheet.Cell("R8").Value = "entspr.";
+                sheet.Cell("R9").Value = "m Flsg.säule";
+
+                // adjust all columns in one shot to row 8
+                sheet.Columns().AdjustToContents(8);
+
+
                 // colum O (not 0 [Zero] but O as in Oliver) holds zetaProd
                 uint fixed_zetaProd_row = iRow;
                 uint fixed_zetaProd_col = 15;
