@@ -75,6 +75,7 @@ namespace ClosedXML.Examples
             new CopyingWorksheets().Create(Path.Combine(path, "CopyingWorksheets.xlsx"));
             new InsertingTables().Create(Path.Combine(path, "InsertingTables.xlsx"));
             new InsertingData().Create(Path.Combine(path, "InsertingData.xlsx"));
+            new Iteration().Create(Path.Combine(path, "Iteration.xlsx"));
             new Hyperlinks().Create(Path.Combine(path, "Hyperlinks.xlsx"));
             new DataValidation().Create(Path.Combine(path, "DataValidation.xlsx"));
             new HideSheets().Create(Path.Combine(path, "HideSheets.xlsx"));
