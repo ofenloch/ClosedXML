@@ -47,7 +47,17 @@ namespace ClosedXML.Excel.CalcEngine
         {
             if (_evaluating || (cell as XLCell).IsEvaluating)
             {
-                throw new InvalidOperationException($"Circular Reference occured during evaluation. Cell: {cell.Address.ToString(XLReferenceStyle.Default, true)}");
+                if (cell.Worksheet.Workbook.Iterate == true)
+                {
+                    if(cell.CachedValue != null)
+                    {
+                        return cell.CachedValue;
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Circular Reference occured during evaluation. Cell: {cell.Address.ToString(XLReferenceStyle.Default, true)}");
+                }
             }
             try
             {
