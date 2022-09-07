@@ -452,5 +452,100 @@ namespace ClosedXML.Tests.Excel
 
             Assert.Throws<ObjectDisposedException>(() => Console.WriteLine(wb.Worksheets.First().FirstCell().Value));
         }
+
+        [Test]
+        [TestCase(true, (uint)5, 0.01)]
+        [TestCase(true, (uint)123, 0.000001)]
+        [TestCase(true, (uint)152, 0.0001)]
+        [TestCase(false, (uint)155, 0.0001)]
+        public void IterationSettings(bool iterate, uint iterateCount, double iterateDelta)
+        {
+            var saveOptions = new SaveOptions { EvaluateFormulasBeforeSaving = true };
+            using (var ms = new MemoryStream())
+            {
+                using (var wb = new XLWorkbook())
+                {
+                    wb.Iterate = iterate;
+                    wb.IterateCount = iterateCount;
+                    wb.IterateDelta = iterateDelta;
+
+                    var ws = wb.AddWorksheet("Iteration");
+
+                    ws.Cell("A1").Value = "Current";
+                    ws.Cell("A1").Value = "Total";
+
+                    var B1 = ws.Cell("B1");
+                    B1.FormulaA1 = "=B2";
+                    var dummy = B1.Value;
+                    var B2 = ws.Cell("B2");
+                    B2.FormulaA1 = "=200+B1";
+                    // this throws "System.InvalidOperationException : Circular Reference"
+                    // dummy = B2.Value;
+
+                    ws.Cell("A5").Value = "wb.Iterate:";
+                    ws.Cell("B5").Value = wb.Iterate;
+                    ws.Cell("A6").Value = "wb.IterateCount:";
+                    ws.Cell("B6").Value = wb.IterateCount;
+                    ws.Cell("A7").Value = "wb.IterateDelta:";
+                    ws.Cell("B7").Value = wb.IterateDelta;
+
+                    if (iterate == false)
+                    {
+                        Assert.Throws<InvalidOperationException>(() =>
+                        {
+                            dummy = B1.Value;
+                        });
+                        Assert.Throws<InvalidOperationException>(() =>
+                        {
+                            dummy = B2.Value;
+                        });
+                    }
+                    else
+                    {
+                        dummy = B1.Value;
+                        dummy = B2.Value;
+                    }
+
+                    wb.SaveAs(ms, saveOptions);
+                }
+                using (var wb = new XLWorkbook(ms))
+                {
+                    var ws = wb.Worksheet(1);
+
+                    var B1 = ws.Cell("B1");
+                    var B2 = ws.Cell("B2");
+                    
+                    Assert.AreEqual(iterate, wb.Iterate);
+                    if (wb.Iterate == true)
+                    {
+                        Assert.AreEqual(iterateCount, wb.IterateCount);
+                        Assert.AreEqual(iterateDelta, wb.IterateDelta);
+
+                        // TODO: The valaue should be 100**(wb.IterateCount+1).
+                        //       The "iteration depth" in ClosedXML/Excel/CalcEngine/CellRangeReference.cs
+                        //       is only 1. See TODO marker there.
+                        var dummy = B2.Value;
+                        Assert.AreEqual(200, dummy);
+                        dummy = B2.Value;
+                        Assert.AreEqual(200, dummy);
+                    }
+                    else
+                    {
+                        Assert.AreEqual((uint)0, wb.IterateCount);
+                        Assert.AreEqual((double)0, wb.IterateDelta);
+
+                        Assert.Throws<InvalidOperationException>(() =>
+                        {
+                            var dummy = B1.Value;
+                        });
+                        Assert.Throws<InvalidOperationException>(() =>
+                        {
+                            var dummy = B2.Value;
+                        });
+                    }
+                }
+            } // using (var ms = new MemoryStream())
+        } // public void IterationSettings(bool iterate, uint iterateCount, double iterateDelta)
+
     }
 }

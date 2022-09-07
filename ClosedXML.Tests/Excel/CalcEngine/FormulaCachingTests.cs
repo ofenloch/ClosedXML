@@ -277,21 +277,13 @@ namespace ClosedXML.Tests.Excel.CalcEngine
                 a2.FormulaA1 = "=A1*10";
                 a3.FormulaA1 = "=A2*10";
                 a4.FormulaA1 = "=A3*10";
-                // force evaluation of cell a4 by getting its value
-                var dummy_a4 = a4.Value;
+                var _ = a4.Value;
                 a1.FormulaA1 = "=SUM(A2:A4)";
 
                 var recalcNeededA1 = a1.NeedsRecalculation;
                 var recalcNeededA2 = a2.NeedsRecalculation;
                 var recalcNeededA3 = a3.NeedsRecalculation;
                 var recalcNeededA4 = a4.NeedsRecalculation;
-
-                // enable iteration to resolve the circular references
-                wb.Iterate = true; // defaults to false in Excel
-                wb.IterateCount = 50; // defaults to 100 in Excel
-                wb.IterateDelta = 0.01; // defaults to 0.001 in Excel
-                // save the workbook for later examination
-                wb.SaveAs("CircularReferenceRecalculationNeededDoesNotFail.xlsx");
 
                 Assert.IsTrue(recalcNeededA1);
                 Assert.IsTrue(recalcNeededA2);

@@ -47,7 +47,32 @@ namespace ClosedXML.Excel.CalcEngine
         {
             if (_evaluating || (cell as XLCell).IsEvaluating)
             {
-                throw new InvalidOperationException($"Circular Reference occured during evaluation. Cell: {cell.Address.ToString(XLReferenceStyle.Default, true)}");
+                if (cell.Worksheet.Workbook.Iterate == true)
+                {
+                    //
+                    // Handle worksheet with iteration:
+                    //
+                    // We simply return the cell's cached value. This corresponds 
+                    // to a single iteration step.
+                    //
+                    // TODO: This needs improvement!
+                    // * We should repeat this cell.Worksheet.Workbook.IterateCount times 
+                    //   to do all the iteration steps ...
+                    // * What do we do if there is no cached value?
+                    //
+                    if(cell.CachedValue != null)
+                    {
+                        return cell.CachedValue;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Iteration without cached cell value occured during evaluation. Cell: {cell.Address.ToString(XLReferenceStyle.Default, true)}");
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Circular Reference occured during evaluation. Cell: {cell.Address.ToString(XLReferenceStyle.Default, true)}");
+                }
             }
             try
             {
