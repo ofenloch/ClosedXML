@@ -155,9 +155,9 @@ namespace TemplateForGeWi
                     var column_G = sheet.Cell((int)iRow, 7);
                     column_G.FormulaA1 = "=IF(  AND( ISNUMBER(E" + siRow + "), E" + siRow + "<>0 ), B" + siRow + "/E" + siRow + ", -1 )";
                     // column H
-                    sheet.Cell((int)iRow, 8).Value = "f(prod_nominal_diameter_" + sStreamNr + ")";
+                    sheet.Cell((int)iRow, 8).Value = "f(prod_inner_tubediameter_" + sStreamNr + ")";
                     // column I
-                    sheet.Cell((int)iRow, 9).Value = "f(prod_length_" + sStreamNr + ")";
+                    sheet.Cell((int)iRow, 9).Value = "f(prod_tubelength_" + sStreamNr + ")";
                     // column J
                     //         =G11/3600/(3,14/4*(H11/1000)^2)
                     var column_J = sheet.Cell((int)iRow, 10);
@@ -242,13 +242,13 @@ namespace TemplateForGeWi
                     var column_G = sheet.Cell((int)iRow, 7);
                     column_G.FormulaA1 = "=IF(  AND( ISNUMBER(E" + siRow + "), E" + siRow + "<>0 ), B" + siRow + "/E" + siRow + ", -1 )";
                     // column H
-                    sheet.Cell((int)iRow, 8).Value = "f(vap_nominal_diamater_" + sStreamNr + ")";
+                    sheet.Cell((int)iRow, 8).Value = "f(vap_inner_tubediameter_" + sStreamNr + ")";
                     // column I
-                    sheet.Cell((int)iRow, 9).Value = "f(vap_length_" + sStreamNr + ")";
+                    sheet.Cell((int)iRow, 9).Value = "f(vap_tubelength_" + sStreamNr + ")";
                     // column J
                     //         =G33/3600/(3,14/4*(H33/1000)^2)
                     var column_J = sheet.Cell((int)iRow, 10);
-                    column_J.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "), H" + siRow + "<>0), G" + siRow + "/3600/(3.14/4*(H" + siRow + "/1000)^2), -1 )"; // column J
+                    column_J.FormulaA1 = "=G" + siRow + "/3600/(3.14/4*(H" + siRow + "/1000)^2)"; // column J
                     // column K
                     var column_K = sheet.Cell((int)iRow, 11);
                     column_K.Value = "";
