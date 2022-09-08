@@ -276,6 +276,22 @@ namespace TemplateForGeWi
                 wb.IterateCount = 100; // Excel's default is 100
                 wb.IterateDelta = 0.001; // Excel's default is 0.001
                 var saveOptions = new SaveOptions { EvaluateFormulasBeforeSaving = true };
+
+                // make sure the doument is re-calculated on reaload
+                wb.FullCalculationOnLoad = true;
+
+                // add some porpeties:
+                wb.Properties.Author = "der Autor";
+                wb.Properties.Title = "Der Titel";
+                wb.Properties.Subject = "Das Thema";
+                wb.Properties.Category = "Die Kategorie";
+                wb.Properties.Keywords = "Die Schlüsselwörter";
+                wb.Properties.Comments = "Die Kommentare";
+                wb.Properties.Status = "Unbekannter Status";
+                wb.Properties.LastModifiedBy = "Oliver Ofenloch";
+                wb.Properties.Company = "Die Firma";
+                wb.Properties.Manager = "Der Manager";
+
                 // save the new workbook
                 Console.WriteLine("saving template as \"{0}\"", fileName);
                 wb.SaveAs(fileName, saveOptions);
