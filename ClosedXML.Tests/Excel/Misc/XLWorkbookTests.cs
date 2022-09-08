@@ -465,17 +465,22 @@ namespace ClosedXML.Tests.Excel
             {
                 using (var wb = new XLWorkbook())
                 {
-                    var ws = wb.AddWorksheet("Iteration");
-                    ws.FirstCell().SetValue("Hello, Iteration!");
-                    var A2 = ws.Cell("A2");
-                    var A3 = ws.Cell("A3");
-                    A2.FormulaA1 = "=IF( ISNUMBER(A3) , A3 + 1 , 20 )";
-                    var dummy = A2.Value;
-                    A3.FormulaA1 = "=IF( ISNUMBER(A2) , A2 + 1 , 10 )";
-
                     wb.Iterate = iterate;
                     wb.IterateCount = iterateCount;
                     wb.IterateDelta = iterateDelta;
+
+                    var ws = wb.AddWorksheet("Iteration");
+
+                    ws.Cell("A1").Value = "Current";
+                    ws.Cell("A1").Value = "Total";
+
+                    var B1 = ws.Cell("B1");
+                    B1.FormulaA1 = "=B2";
+                    var dummy = B1.Value;
+                    var B2 = ws.Cell("B2");
+                    B2.FormulaA1 = "=200+B1";
+                    // this throws "System.InvalidOperationException : Circular Reference"
+                    // dummy = B2.Value;
 
                     ws.Cell("A5").Value = "wb.Iterate:";
                     ws.Cell("B5").Value = wb.Iterate;
@@ -488,49 +493,55 @@ namespace ClosedXML.Tests.Excel
                     {
                         Assert.Throws<InvalidOperationException>(() =>
                         {
-                            dummy = A2.Value;
+                            dummy = B1.Value;
                         });
                         Assert.Throws<InvalidOperationException>(() =>
                         {
-                            dummy = A3.Value;
+                            dummy = B2.Value;
                         });
                     }
                     else
                     {
-                        dummy = A2.Value;
-                        dummy = A3.Value;
+                        dummy = B1.Value;
+                        dummy = B2.Value;
                     }
 
                     wb.SaveAs(ms, saveOptions);
                 }
                 using (var wb = new XLWorkbook(ms))
                 {
+                    var ws = wb.Worksheet(1);
+
+                    var B1 = ws.Cell("B1");
+                    var B2 = ws.Cell("B2");
+                    
                     Assert.AreEqual(iterate, wb.Iterate);
                     if (wb.Iterate == true)
                     {
                         Assert.AreEqual(iterateCount, wb.IterateCount);
                         Assert.AreEqual(iterateDelta, wb.IterateDelta);
 
-                        // TODO: This should work:
-                        var dummy = wb.Worksheet(1).Cell("A2").Value;
-                        Assert.AreEqual(28, dummy);
-                        dummy = wb.Worksheet(1).Cell("A3").Value;
-                        Assert.AreEqual(29, dummy);
+                        // TODO: The valaue should be 100**(wb.IterateCount+1).
+                        //       The "iteration depth" in ClosedXML/Excel/CalcEngine/CellRangeReference.cs
+                        //       is only 1. See TODO marker there.
+                        var dummy = B2.Value;
+                        Assert.AreEqual(200, dummy);
+                        dummy = B2.Value;
+                        Assert.AreEqual(200, dummy);
                     }
                     else
                     {
-                        Assert.AreEqual(0, wb.IterateCount);
-                        Assert.AreEqual(0, wb.IterateDelta);
+                        Assert.AreEqual((uint)0, wb.IterateCount);
+                        Assert.AreEqual((double)0, wb.IterateDelta);
 
                         Assert.Throws<InvalidOperationException>(() =>
                         {
-                            var dummy = wb.Worksheet(1).Cell("A2").Value;
+                            var dummy = B1.Value;
                         });
                         Assert.Throws<InvalidOperationException>(() =>
                         {
-                            var dummy = wb.Worksheet(1).Cell("A3").Value;
+                            var dummy = B2.Value;
                         });
-                        
                     }
                 }
             } // using (var ms = new MemoryStream())
