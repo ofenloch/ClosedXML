@@ -49,10 +49,6 @@ namespace ClosedXML.Excel.CalcEngine
             {
                 if (cell.Worksheet.Workbook.Iterate == true)
                 {
-<<<<<<< HEAD
-                    // handle worksheet with iteration
-                    // TODO: This needs improvement!!!
-=======
                     //
                     // Handle worksheet with iteration:
                     //
@@ -64,7 +60,6 @@ namespace ClosedXML.Excel.CalcEngine
                     //   to do all the iteration steps ...
                     // * What do we do if there is no cached value?
                     //
->>>>>>> 564411a81278771b50e184c1e1bcac7a51d82ff6
                     if(cell.CachedValue != null)
                     {
                         return cell.CachedValue;
