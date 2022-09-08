@@ -248,7 +248,10 @@ namespace TemplateForGeWi
                     // column J
                     //         =G33/3600/(3,14/4*(H33/1000)^2)
                     var column_J = sheet.Cell((int)iRow, 10);
-                    column_J.FormulaA1 = "=G" + siRow + "/3600/(3.14/4*(H" + siRow + "/1000)^2)"; // column J
+                    // This won't work (division by zewro):
+                    //   column_J.FormulaA1 = "=G" + siRow + "/3600/(3.14/4*(H" + siRow + "/1000)^2)"; // column J
+                    // So we have to revert the changes made in commit 3282180633273d6cd4e8858a7beffde3f62bc2ad
+                    column_J.FormulaA1 = "=IF( AND( ISNUMBER(H" + siRow + "), H" + siRow + "<>0), G" + siRow + "/3600/(3.14/4*(H" + siRow + "/1000)^2), -1 )"; // column J
                     // column K
                     var column_K = sheet.Cell((int)iRow, 11);
                     column_K.Value = "";
